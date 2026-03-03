@@ -1,10 +1,9 @@
 import { DetailsChatItemModel } from "entities/chat";
 import { Client } from "entities/coach";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { cn } from "shared/lib";
 import { Button, Input } from "shared/ui";
 import { MultiSelectField } from "widgets/MultiSelectField";
-import { getAvatarUrl } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 
@@ -45,15 +44,7 @@ export const CreateGroupModal = ({
   const [groupDescription, setGroupDescription] = useState(
     isEdit ? chat?.description || "" : ""
   );
-  const {
-    files,
-    items,
-    getInputProps,
-    open: openFilePicker,
-    getDropzoneProps,
-    dragOver,
-    remove,
-  } = useFilePicker({
+  const { files } = useFilePicker({
     accept: ["image/png", "image/jpeg", "application/pdf", ".pdf", "video/mp4"],
   });
   const [selectedOption, setSelectedOption] = useState<string[]>(
@@ -63,104 +54,6 @@ export const CreateGroupModal = ({
         : p?.user.name
     ) || []
   );
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const file = files?.[0] ?? null;
-
-  useEffect(() => {
-    if (!file) return;
-
-    const url = URL.createObjectURL(file);
-    setPreviewUrl((prev) => (prev === url ? prev : url));
-
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [file]);
-
-  const avatarObjectUrlRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (file) return;
-
-    let isMounted = true;
-
-    if (!isEdit || !chat?.avatar_url) {
-      if (avatarObjectUrlRef.current) {
-        URL.revokeObjectURL(avatarObjectUrlRef.current);
-        avatarObjectUrlRef.current = null;
-      }
-      setPreviewUrl(null);
-      return;
-    }
-
-    // Handle Blob objects
-    if (
-      typeof chat.avatar_url === "object" &&
-      chat.avatar_url &&
-      (chat.avatar_url as Blob).size !== undefined
-    ) {
-      if (avatarObjectUrlRef.current) {
-        URL.revokeObjectURL(avatarObjectUrlRef.current);
-      }
-      const url = URL.createObjectURL(chat.avatar_url);
-      avatarObjectUrlRef.current = url;
-      setPreviewUrl(url);
-      return;
-    }
-
-    const resolveAvatar = async () => {
-      const rawAvatar = chat.avatar_url;
-      if (typeof rawAvatar !== "string") return;
-
-      const filename = rawAvatar.split("/").pop() || rawAvatar;
-      const resolved = await getAvatarUrl(filename);
-
-      if (!resolved) {
-        if (isMounted) setPreviewUrl(null);
-        return;
-      }
-
-      try {
-        const persistedUser = localStorage.getItem("persist:user");
-        const parsedUser = persistedUser ? JSON.parse(persistedUser) : null;
-        const token = parsedUser?.token?.replace(/"/g, "") ?? "";
-
-        const response = await fetch(resolved, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
-
-        if (!response.ok) {
-          if (isMounted) setPreviewUrl(resolved);
-          return;
-        }
-
-        const blob = await response.blob();
-
-        if (!isMounted) return;
-
-        if (avatarObjectUrlRef.current) {
-          URL.revokeObjectURL(avatarObjectUrlRef.current);
-          avatarObjectUrlRef.current = null;
-        }
-
-        const blobUrl = URL.createObjectURL(blob);
-        avatarObjectUrlRef.current = blobUrl;
-        setPreviewUrl(blobUrl);
-      } catch {
-        if (isMounted) setPreviewUrl(resolved);
-      }
-    };
-
-    resolveAvatar();
-
-    return () => {
-      isMounted = false;
-      if (avatarObjectUrlRef.current) {
-        URL.revokeObjectURL(avatarObjectUrlRef.current);
-        avatarObjectUrlRef.current = null;
-      }
-    };
-  }, [file, isEdit, chat?.avatar_url]);
-
   const localSave = () => {
     if (!isEdit) {
       onSubmit({
@@ -241,12 +134,12 @@ export const CreateGroupModal = ({
             <h3 className="text-xl font-semibold">Multiple chat settings</h3>
           </div>
           <p className="mt-3 text-sm text-gray-700">
-            Please add this multiple chat name and image to make it more
-            recognisable amongst other chats.
+            Please add this multiple chat name to make it more recognisable
+            amongst other chats.
           </p>
         </div>
 
-        <div>
+        {/* <div>
           <p className="text-sm font-semibold text-gray-700">Chat avatar</p>
           <Button
             variant={"unstyled"}
@@ -318,7 +211,7 @@ export const CreateGroupModal = ({
             )}
             <Input className="hidden" {...getInputProps()} />
           </Button>
-        </div>
+        </div> */}
 
         <div className="flex flex-col gap-[24px]">
           <div>

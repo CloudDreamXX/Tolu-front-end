@@ -16,8 +16,6 @@ import { DeleteMessagePopup } from "widgets/DeleteMessagePopup";
 import { UpdateFolderPopup } from "./components/UpdateFileFolderPopup";
 import { FileLibraryFolder } from "entities/files-library";
 import { useFilePicker } from "shared/hooks/useFilePicker";
-import { cn } from "shared/lib";
-import { EmptyStateTolu } from "widgets/empty-state-tolu";
 import { MoveFilesPopup } from "./components/MoveFilesPopup";
 import { findViewingFolderInFiles } from "./lib";
 import { RootState } from "entities/store";
@@ -33,20 +31,20 @@ export const FilesLibrary = () => {
   const [movePopup, setMovePopup] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const lastUploadSignatureRef = useRef<string | null>(null);
 
-  const { items, getDropzoneProps, getInputProps, dragOver, clear, open } =
-    useFilePicker({
-      accept: [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "image/jpeg",
-        "image/png",
-        "text/plain",
-        "video/mp4",
-      ],
-      maxFiles: 10,
-    });
+  const { items, getInputProps, clear, open } = useFilePicker({
+    accept: [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "image/jpeg",
+      "image/png",
+      "text/plain",
+      "video/mp4",
+    ],
+    maxFiles: 10,
+  });
 
   const token = useSelector((state: RootState) => state.user?.token);
 
@@ -131,17 +129,38 @@ export const FilesLibrary = () => {
     }
   };
 
-  const handleUpload = async () => {
-    await uploadFiles({
-      files: items.map((item) => item.file),
-      descriptions: JSON.stringify(
-        items.map((item, index) => ({ [index]: item.file.name }))
-      ),
-      folder_id: viewingFolder ? viewingFolder.id : null,
-    });
-    clear();
-    refetch();
-  };
+  useEffect(() => {
+    if (!items.length) {
+      lastUploadSignatureRef.current = null;
+      return;
+    }
+
+    if (isUploading) return;
+
+    const uploadSignature = `${viewingFolder?.id || "root"}:${items
+      .map(
+        (item) =>
+          `${item.file.name}-${item.file.size}-${item.file.lastModified}`
+      )
+      .join("|")}`;
+
+    if (lastUploadSignatureRef.current === uploadSignature) return;
+    lastUploadSignatureRef.current = uploadSignature;
+
+    const uploadSelectedFiles = async () => {
+      await uploadFiles({
+        files: items.map((item) => item.file),
+        descriptions: JSON.stringify(
+          items.map((item, index) => ({ [index]: item.file.name }))
+        ),
+        folder_id: viewingFolder ? viewingFolder.id : null,
+      });
+      clear();
+      refetch();
+    };
+
+    void uploadSelectedFiles();
+  }, [items, isUploading, uploadFiles, viewingFolder, clear, refetch]);
 
   const handleDelete = async (fileId: string) => {
     await deleteFile(fileId);
@@ -249,7 +268,6 @@ export const FilesLibrary = () => {
             style={{ width: getRandomWidth(200, 400) }}
           />
         </div>
-        <div className="w-full bg-white rounded-[12px] flex flex-col justify-center items-center text-center p-4 cursor-pointer transition-colors h-[149px] skeleton-gradient" />
         <div className="grid grid-cols-2 gap-3 mt-6">
           {[...Array(10)].map((_, i) => (
             <div
@@ -324,70 +342,31 @@ export const FilesLibrary = () => {
                 }}
               />
             </div>
+            <Button
+              variant="brightblue"
+              className="h-[40px] w-[40px] p-0 min-w-0 rounded-full shrink-0"
+              onClick={open}
+              disabled={isUploading}
+            >
+              <Input
+                className="hidden"
+                containerClassName="hidden"
+                {...getInputProps()}
+              />
+              {isUploading ? (
+                <MaterialIcon
+                  iconName="progress_activity"
+                  className="animate-spin"
+                />
+              ) : (
+                <MaterialIcon iconName="add" />
+              )}
+            </Button>
             <Button variant="brightblue" onClick={() => setCreatePopup(true)}>
               Create a folder
             </Button>
           </div>
         </div>
-
-        <div>
-          {files?.data.total_files === 0 ? (
-            <EmptyStateTolu
-              text="To deep research a knowledge source upload files to your File Library and ask Tolu to conduct a research or create an inspired content."
-              footer={
-                <div className="flex gap-4">
-                  <Button
-                    variant="brightblue"
-                    className="min-w-40"
-                    onClick={open}
-                  >
-                    Upload Files
-                  </Button>
-                </div>
-              }
-            />
-          ) : (
-            <div
-              className={cn(
-                "w-full border-[2px] border-dashed border-[#1C63DB] bg-white rounded-[12px] flex flex-col justify-center items-center text-center p-4 cursor-pointer transition-colors ",
-                { "bg-blue-50 border-blue-400": dragOver }
-              )}
-              {...getDropzoneProps()}
-            >
-              <MaterialIcon
-                iconName="cloud_upload"
-                fill={1}
-                className="text-[#1C63DB] p-2 border rounded-xl"
-              />
-              <p className="text-[#1C63DB] text-[14px]  font-semibold mt-[8px]">
-                Click to upload
-              </p>
-              <p className="text-[#5F5F65] text-[14px] ">or drag and drop</p>
-              <p className="text-[#5F5F65] text-[14px] ">
-                pdf, doc, docx, png, jpeg and txt files
-              </p>
-            </div>
-          )}
-
-          <Input className="hidden" {...getInputProps()} />
-        </div>
-        {items.length > 0 && (
-          <Button
-            variant="brightblue"
-            className="self-end w-52"
-            onClick={handleUpload}
-          >
-            {isUploading ? (
-              <MaterialIcon
-                iconName="progress_activity"
-                className="text-white animate-spin"
-                fill={1}
-              />
-            ) : (
-              `Upload ${items.length} files`
-            )}
-          </Button>
-        )}
 
         {selectedFiles.length > 0 && (
           <Button
