@@ -82,6 +82,7 @@ export const LibraryChat = () => {
   const filesFromLibrary = useSelector(
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
+  const token = useSelector((state: RootState) => state.user?.token);
 
   const chatState = useSelector(
     (state: RootState) => state.client.chatHistory[currentChatId] || []
@@ -448,6 +449,24 @@ export const LibraryChat = () => {
         }
       } else {
         const sessionData = await getSearchSession(id).unwrap();
+        const apiBaseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+          /\/$/,
+          ""
+        );
+        const resolveStoredFileUrl = (path?: string) => {
+          if (!path) return "";
+          if (/^https?:\/\//i.test(path)) return path;
+          const normalizedPath = path
+            .split("?")[0]
+            .split("#")[0]
+            .replace(/^\/?file_library(?=\/)/, "/files_library");
+          const normalizedEndpoint = normalizedPath.startsWith("/")
+            ? normalizedPath
+            : `/${normalizedPath}`;
+          return apiBaseUrl
+            ? `${apiBaseUrl}${normalizedEndpoint}`
+            : normalizedEndpoint;
+        };
 
         const imageMime = [
           "image/jpeg",
@@ -467,7 +486,9 @@ export const LibraryChat = () => {
             .filter((f) => imageMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return URL.createObjectURL(blob);
             })
@@ -478,7 +499,9 @@ export const LibraryChat = () => {
             .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return {
                 name: file.filename,
