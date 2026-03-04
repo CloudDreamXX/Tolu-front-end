@@ -104,6 +104,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const filesFromLibrary = useSelector(
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
+  const token = useSelector((state: RootState) => state.user?.token);
 
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
 
@@ -459,6 +460,42 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       } else {
         const sessionData = await getSearchSession(chatId).unwrap();
+        const apiBaseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+          /\/$/,
+          ""
+        );
+        const resolveStoredFileUrl = (path?: string) => {
+          if (!path) return "";
+          if (/^https?:\/\//i.test(path)) return path;
+          const normalizedPath = path.split("?")[0].split("#")[0];
+          const normalizedEndpoint = normalizedPath.startsWith("/")
+            ? normalizedPath
+            : `/${normalizedPath}`;
+          return apiBaseUrl
+            ? `${apiBaseUrl}${normalizedEndpoint}`
+            : normalizedEndpoint;
+        };
+
+        const storedFilesFromSession = sessionData.flatMap((item) =>
+          Array.isArray(item.stored_files) ? item.stored_files : []
+        );
+
+        const uniqueStoredFiles = Array.from(
+          new Map(
+            storedFilesFromSession.map((file) => [
+              file.path || file.filename,
+              file,
+            ])
+          ).values()
+        );
+
+        setExistingFiles(
+          uniqueStoredFiles.map((file) =>
+            file.filename ||
+            file.path?.split("/").pop()?.split("_").slice(1).join("_") ||
+            "File"
+          )
+        );
 
         const imageMime = [
           "image/jpeg",
@@ -478,7 +515,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             .filter((f) => imageMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return URL.createObjectURL(blob);
             })
@@ -489,7 +528,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return {
                 name: file.filename,
@@ -1252,10 +1293,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -1279,10 +1320,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              1
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1476,10 +1517,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1504,10 +1545,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  1
+                                </span>
+                              )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1530,10 +1571,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
