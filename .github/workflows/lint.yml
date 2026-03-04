@@ -73,6 +73,30 @@ jobs:
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
 
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const requestWithRetry = async (fn, label) => {
+              const maxAttempts = 4;
+
+              for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  return await fn();
+                } catch (error) {
+                  const status = error?.status;
+                  const retriable = [500, 502, 503, 504].includes(status);
+
+                  if (!retriable || attempt === maxAttempts) {
+                    throw error;
+                  }
+
+                  const delayMs = 1000 * Math.pow(2, attempt - 1);
+                  core.warning(
+                    `${label} failed with ${status}. Retrying in ${delayMs}ms (attempt ${attempt}/${maxAttempts})...`
+                  );
+                  await sleep(delayMs);
+                }
+              }
+            };
+
             const jobStatus = "${{ job.status }}";
             const emoji = jobStatus === "success" ? "✅" : "❌";
             const statusText = jobStatus === "success" ? "PASSED" : "FAILED";
@@ -89,29 +113,44 @@ jobs:
             bodyText += `🔍 [View Full Action Logs Here](${runUrl})`;
 
             // Check if we already have a comment from the bot on this PR
-            const { data: comments } = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number,
-            });
+            try {
+              const { data: comments } = await requestWithRetry(
+                () =>
+                  github.rest.issues.listComments({
+                    owner,
+                    repo,
+                    issue_number,
+                  }),
+                "listComments"
+              );
 
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && comment.body.includes('## Lint & Type Check:')
-            );
+              const botComment = comments.find(comment => 
+                comment.user.type === 'Bot' && comment.body.includes('## Lint & Type Check:')
+              );
 
-            // Update existing comment to prevent spam, or create a new one
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: botComment.id,
-                body: bodyText
-              });
-            } else {
-              await github.rest.issues.createComment({
-                issue_number,
-                owner,
-                repo,
-                body: bodyText
-              });
+              if (botComment) {
+                await requestWithRetry(
+                  () =>
+                    github.rest.issues.updateComment({
+                      owner,
+                      repo,
+                      comment_id: botComment.id,
+                      body: bodyText
+                    }),
+                  "updateComment"
+                );
+              } else {
+                await requestWithRetry(
+                  () =>
+                    github.rest.issues.createComment({
+                      issue_number,
+                      owner,
+                      repo,
+                      body: bodyText
+                    }),
+                  "createComment"
+                );
+              }
+            } catch (error) {
+              core.warning(`Skipping PR comment due to GitHub API error: ${error?.status || 'unknown'}`);
             }

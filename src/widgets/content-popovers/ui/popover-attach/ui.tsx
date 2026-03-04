@@ -12,7 +12,6 @@ import { cn, formatFileSize, toast } from "shared/lib";
 import {
   Badge,
   Button,
-  DropArea,
   Input,
   Popover,
   PopoverContent,
@@ -68,7 +67,6 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   hideFromLibrary = false,
   onOpenChange,
 }) => {
-  const [dragActive, setDragActive] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,34 +113,21 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
   }, [files, filesFromLibrary]);
 
   useEffect(() => {
-    if (attachedFiles.length && setFiles) {
-      setFiles(attachedFiles.map((file) => file.file));
+    if (!files?.length) {
+      setAttachedFiles([]);
+      return;
     }
-  }, [attachedFiles]);
 
-  useEffect(() => {
-    if (files && files.length > 0) {
-      const newAttachedFiles = files.map((file) => ({
-        name: file.name,
-        size: formatFileSize(file.size),
-        type: file.type,
-        file,
-      }));
-      setAttachedFiles(newAttachedFiles);
-    }
-  }, []);
+    const newAttachedFiles = files.map((file) => ({
+      name: file.name,
+      size: formatFileSize(file.size),
+      type: file.type,
+      file,
+    }));
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragActive(true);
-  };
-  const handleDragLeave = () => setDragActive(false);
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragActive(false);
-    const files = Array.from(e.dataTransfer.files);
-    processFiles(files);
-  };
+    setAttachedFiles(newAttachedFiles);
+  }, [files]);
+
   const handleBrowseClick = () => fileInputRef.current?.click();
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -249,13 +234,15 @@ export const PopoverAttach: React.FC<PopoverAttachProps> = ({
         </div>
       )}
 
-      <DropArea
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        dragActive={dragActive}
-        onBrowseClick={handleBrowseClick}
-      />
+      <Button
+        variant="unstyled"
+        size="unstyled"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600"
+        onClick={handleBrowseClick}
+      >
+        <MaterialIcon iconName="add" />
+        Add files
+      </Button>
 
       <Input
         ref={fileInputRef}

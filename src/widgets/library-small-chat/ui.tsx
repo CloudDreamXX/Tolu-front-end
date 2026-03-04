@@ -105,6 +105,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const filesFromLibrary = useSelector(
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
+  const token = useSelector((state: RootState) => state.user?.token);
 
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
 
@@ -461,6 +462,43 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         }
       } else {
         const sessionData = await getSearchSession(chatId).unwrap();
+        const apiBaseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+          /\/$/,
+          ""
+        );
+        const resolveStoredFileUrl = (path?: string) => {
+          if (!path) return "";
+          if (/^https?:\/\//i.test(path)) return path;
+          const normalizedPath = path.split("?")[0].split("#")[0];
+          const normalizedEndpoint = normalizedPath.startsWith("/")
+            ? normalizedPath
+            : `/${normalizedPath}`;
+          return apiBaseUrl
+            ? `${apiBaseUrl}${normalizedEndpoint}`
+            : normalizedEndpoint;
+        };
+
+        const storedFilesFromSession = sessionData.flatMap((item) =>
+          Array.isArray(item.stored_files) ? item.stored_files : []
+        );
+
+        const uniqueStoredFiles = Array.from(
+          new Map(
+            storedFilesFromSession.map((file) => [
+              file.path || file.filename,
+              file,
+            ])
+          ).values()
+        );
+
+        setExistingFiles(
+          uniqueStoredFiles.map(
+            (file) =>
+              file.filename ||
+              file.path?.split("/").pop()?.split("_").slice(1).join("_") ||
+              "File"
+          )
+        );
 
         const imageMime = [
           "image/jpeg",
@@ -480,7 +518,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             .filter((f) => imageMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return URL.createObjectURL(blob);
             })
@@ -491,7 +531,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             .filter((f) => pdfMime.includes(f.stored_files[0].content_type))
             .map(async (f) => {
               const file = f.stored_files[0];
-              const res = await fetch(file.path);
+              const res = await fetch(resolveStoredFileUrl(file.path), {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
               const blob = await res.blob();
               return {
                 name: file.filename,
