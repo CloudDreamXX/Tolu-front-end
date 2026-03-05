@@ -57,6 +57,8 @@ import {
   useCreateMedicationMutation,
   useCreateSupplementMutation,
 } from "entities/health-history/api";
+import { useUploadFilesLibraryMutation } from "entities/files-library/api";
+import { ConfirmModal } from "widgets/ConfirmModal";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -107,6 +109,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const token = useSelector((state: RootState) => state.user?.token);
 
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
+  const [isSaveToLibraryModalOpen, setIsSaveToLibraryModalOpen] =
+    useState(false);
+  const [pendingLibraryFiles, setPendingLibraryFiles] = useState<File[]>([]);
 
   const { isMobileOrTablet } = usePageWidth();
 
@@ -156,6 +161,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   const [sendNote] = useSendChatNoteMutation();
+  const [uploadFilesToLibrary, { isLoading: isSavingToLibrary }] =
+    useUploadFilesLibraryMutation();
   const [createMedication] = useCreateMedicationMutation();
   const [createSupplement] = useCreateSupplementMutation();
 
@@ -646,6 +653,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     const imagePreviews = filesState
       .filter((f) => imageMime.includes(f.type))
       .map((f) => URL.createObjectURL(f));
+    const filesUsedInMessage = [...filesState];
 
     const pdfPreviews = filesState
       .filter((f) => pdfMime.includes(f.type))
@@ -766,6 +774,11 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
         if (finalData?.chat_title) {
           setChatTitle(finalData.chat_title);
+        }
+
+        if (filesUsedInMessage.length > 0) {
+          setPendingLibraryFiles(filesUsedInMessage);
+          setIsSaveToLibraryModalOpen(true);
         }
       };
 
@@ -1042,6 +1055,39 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     dispatch(setFilesToChat(files));
   };
 
+  const handleSaveFilesToLibrary = async () => {
+    if (!pendingLibraryFiles.length) {
+      setIsSaveToLibraryModalOpen(false);
+      return;
+    }
+
+    try {
+      await uploadFilesToLibrary({
+        files: pendingLibraryFiles,
+        descriptions: JSON.stringify(
+          pendingLibraryFiles.map((file, index) => ({ [index]: file.name }))
+        ),
+        folder_id: null,
+      }).unwrap();
+
+      toast({ title: "File saved to Files Library" });
+    } catch (error) {
+      toast({
+        title: "Failed to save file to Files Library",
+        variant: "destructive",
+      });
+      console.error("Failed to save files to library", error);
+    } finally {
+      setPendingLibraryFiles([]);
+      setIsSaveToLibraryModalOpen(false);
+    }
+  };
+
+  const handleCancelSaveToLibrary = () => {
+    setPendingLibraryFiles([]);
+    setIsSaveToLibraryModalOpen(false);
+  };
+
   const handleSetFolder = (folder: string | null) => {
     dispatch(setFolderToChat(folder));
   };
@@ -1294,10 +1340,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -1321,10 +1367,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              1
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1518,10 +1564,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1546,10 +1592,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  1
+                                </span>
+                              )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1572,10 +1618,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1602,6 +1648,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           onAddSupplement={handleAddSelectionToSupplements}
         />
       )}
+      <ConfirmModal
+        isOpen={isSaveToLibraryModalOpen}
+        onClose={handleCancelSaveToLibrary}
+        onConfirm={() => {
+          void handleSaveFilesToLibrary();
+        }}
+        title="Save file to Files Library?"
+        description="Do you want to save this uploaded file in your Files Library as well?"
+        confirmText={isSavingToLibrary ? "Saving..." : "Save"}
+        cancelText="No"
+      />
     </>
   );
 };
