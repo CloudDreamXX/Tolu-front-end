@@ -20,6 +20,7 @@ import { MoveFilesPopup } from "./components/MoveFilesPopup";
 import { findViewingFolderInFiles } from "./lib";
 import { RootState } from "entities/store";
 import { useSelector } from "react-redux";
+import { ConfirmModal } from "widgets/ConfirmModal";
 
 export const FilesLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,6 +33,10 @@ export const FilesLibrary = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const lastUploadSignatureRef = useRef<string | null>(null);
+  const [pendingUploadFiles, setPendingUploadFiles] = useState<File[]>([]);
+  const [duplicateFileNames, setDuplicateFileNames] = useState<string[]>([]);
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] =
+    useState<boolean>(false);
 
   const { items, getInputProps, clear, open } = useFilePicker({
     accept: [
@@ -129,6 +134,27 @@ export const FilesLibrary = () => {
     }
   };
 
+  const getCurrentFolderFiles = () => {
+    if (viewingFolder) {
+      return viewingFolder.files;
+    }
+
+    return files?.data.root_files || [];
+  };
+
+  const uploadSelectedFiles = async (filesToUpload: File[]) => {
+    await uploadFiles({
+      files: filesToUpload,
+      descriptions: JSON.stringify(
+        filesToUpload.map((file, index) => ({ [index]: file.name }))
+      ),
+      folder_id: viewingFolder ? viewingFolder.id : null,
+    });
+
+    clear();
+    await refetch();
+  };
+
   useEffect(() => {
     if (!items.length) {
       lastUploadSignatureRef.current = null;
@@ -147,20 +173,102 @@ export const FilesLibrary = () => {
     if (lastUploadSignatureRef.current === uploadSignature) return;
     lastUploadSignatureRef.current = uploadSignature;
 
-    const uploadSelectedFiles = async () => {
-      await uploadFiles({
-        files: items.map((item) => item.file),
-        descriptions: JSON.stringify(
-          items.map((item, index) => ({ [index]: item.file.name }))
-        ),
-        folder_id: viewingFolder ? viewingFolder.id : null,
-      });
-      clear();
-      refetch();
-    };
+    const filesToUpload = items.map((item) => item.file);
+    const existingNames = new Set(
+      getCurrentFolderFiles().map((file) => file.name.toLowerCase())
+    );
 
-    void uploadSelectedFiles();
-  }, [items, isUploading, uploadFiles, viewingFolder, clear, refetch]);
+    const duplicates = Array.from(
+      new Set(
+        filesToUpload
+          .filter((file) => existingNames.has(file.name.toLowerCase()))
+          .map((file) => file.name)
+      )
+    );
+
+    if (duplicates.length) {
+      setPendingUploadFiles(filesToUpload);
+      setDuplicateFileNames(duplicates);
+      setIsDuplicateModalOpen(true);
+      return;
+    }
+
+    void uploadSelectedFiles(filesToUpload);
+  }, [items, isUploading, viewingFolder, clear, refetch, files]);
+
+  const handleReplaceDuplicateFiles = async () => {
+    const duplicateNamesSet = new Set(
+      duplicateFileNames.map((name) => name.toLowerCase())
+    );
+
+    const duplicateIds = getCurrentFolderFiles()
+      .filter((file) => duplicateNamesSet.has(file.name.toLowerCase()))
+      .map((file) => file.id);
+
+    await Promise.all(duplicateIds.map((fileId) => deleteFile(fileId)));
+    await uploadSelectedFiles(pendingUploadFiles);
+
+    setPendingUploadFiles([]);
+    setDuplicateFileNames([]);
+    setIsDuplicateModalOpen(false);
+  };
+
+  const handleCancelDuplicateUpload = () => {
+    setPendingUploadFiles([]);
+    setDuplicateFileNames([]);
+    setIsDuplicateModalOpen(false);
+    lastUploadSignatureRef.current = null;
+    clear();
+  };
+
+  const getCopyName = (originalName: string, takenNames: Set<string>) => {
+    const dotIndex = originalName.lastIndexOf(".");
+    const hasExtension = dotIndex > 0;
+
+    const baseName = hasExtension
+      ? originalName.slice(0, dotIndex)
+      : originalName;
+    const extension = hasExtension ? originalName.slice(dotIndex) : "";
+
+    let copyIndex = 1;
+    let candidate = `${baseName} (copy)${extension}`;
+
+    while (takenNames.has(candidate.toLowerCase())) {
+      copyIndex += 1;
+      candidate = `${baseName} (copy ${copyIndex})${extension}`;
+    }
+
+    takenNames.add(candidate.toLowerCase());
+    return candidate;
+  };
+
+  const handleCreateCopyForDuplicates = async () => {
+    const duplicateNamesSet = new Set(
+      duplicateFileNames.map((name) => name.toLowerCase())
+    );
+    const takenNames = new Set(
+      getCurrentFolderFiles().map((file) => file.name.toLowerCase())
+    );
+
+    const filesToUploadAsCopies = pendingUploadFiles.map((file) => {
+      if (!duplicateNamesSet.has(file.name.toLowerCase())) {
+        takenNames.add(file.name.toLowerCase());
+        return file;
+      }
+
+      const copyName = getCopyName(file.name, takenNames);
+      return new File([file], copyName, {
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+    });
+
+    await uploadSelectedFiles(filesToUploadAsCopies);
+
+    setPendingUploadFiles([]);
+    setDuplicateFileNames([]);
+    setIsDuplicateModalOpen(false);
+  };
 
   const handleDelete = async (fileId: string) => {
     await deleteFile(fileId);
@@ -578,6 +686,21 @@ export const FilesLibrary = () => {
           onMove={handleMoveFiles}
         />
       )}
+      <ConfirmModal
+        isOpen={isDuplicateModalOpen}
+        onClose={handleCancelDuplicateUpload}
+        onConfirm={() => {
+          void handleReplaceDuplicateFiles();
+        }}
+        onAdditionalAction={() => {
+          void handleCreateCopyForDuplicates();
+        }}
+        title="File with this name already exists"
+        description={`${duplicateFileNames.join(", ")} already exists in this folder. Do you want to replace it?`}
+        confirmText="Replace"
+        cancelText="Cancel"
+        additionalActionText="Create a copy"
+      />
     </>
   );
 };

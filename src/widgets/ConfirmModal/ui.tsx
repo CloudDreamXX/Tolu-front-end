@@ -6,20 +6,24 @@ type ConfirmModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onConfirm?: () => void;
+  onAdditionalAction?: () => void;
   title: React.ReactNode;
   description?: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
+  additionalActionText?: string;
 };
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  onAdditionalAction,
   title,
   description,
   confirmText = "Confirm",
   cancelText = "Cancel",
+  additionalActionText,
 }) => {
   const titleId = useId();
   const descId = useId();
@@ -78,20 +82,32 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               variant={"unstyled"}
               size={"unstyled"}
               onClick={onClose}
-              className="w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
+              className="w-full md:w-fit px-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold"
             >
               {cancelText}
             </Button>
-            <Button
-              variant={"unstyled"}
-              size={"unstyled"}
-              onClick={onConfirm}
-              className={
-                "w-full md:w-fit px-[39px] py-[11px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
-              }
-            >
-              {confirmText}
-            </Button>
+            <div className="flex items-center gap-2">
+              {additionalActionText && onAdditionalAction ? (
+                <Button
+                  variant={"unstyled"}
+                  size={"unstyled"}
+                  onClick={onAdditionalAction}
+                  className="w-full md:w-fit px-[16px] py-[10px] rounded-[1000px] bg-white border border-[#1C63DB] text-[#1C63DB] text-[16px] font-semibold"
+                >
+                  {additionalActionText}
+                </Button>
+              ) : null}
+              <Button
+                variant={"unstyled"}
+                size={"unstyled"}
+                onClick={onConfirm}
+                className={
+                  "w-full md:w-fit px-[16px] py-[10px] rounded-[1000px] bg-[#1C63DB] text-white text-[16px] font-semibold"
+                }
+              >
+                {confirmText}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
