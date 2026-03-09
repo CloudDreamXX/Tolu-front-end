@@ -472,7 +472,7 @@ export const LibraryClientContent = () => {
             <LibraryCard
               id={it.id}
               key={it.id}
-              title={it.title}
+              title={it.ai_title}
               author={it.author_name}
               onStatusChange={onStatusChange}
               contentStatus={statusMap[it.id]}

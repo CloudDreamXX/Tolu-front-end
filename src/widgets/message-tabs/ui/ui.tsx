@@ -39,6 +39,7 @@ import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
+import { SharedContentTab } from "./shared-content-tab";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
@@ -67,6 +68,7 @@ const ALL_TABS: TabItem[] = [
   { id: "plan", label: "Action plan" },
   { id: "medications", label: "Medications" },
   { id: "supplements", label: "Supplements" },
+  { id: "shared-content", label: "Shared content" },
   {
     id: "recommended",
     label: "Recommended for you",
@@ -228,11 +230,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   }, [activeTab, availableTabs, queryTab, setActiveTab]);
 
   useEffect(() => {
-    if (!chatId) {
-      setChat(null);
-      setSelectedClient(null);
-      setSearch("");
-    }
+    setChat(null);
+    setSelectedClient(null);
+    setSearch("");
   }, [chatId]);
 
   useEffect(() => {
@@ -343,10 +343,12 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     skip: !receiverUserId,
   });
 
-  const { data: healthHistoryData } = useGetCoachClientHealthHistoryQuery(
-    receiver?.user.id || location.pathname.split("/").pop()!,
-    {}
-  );
+  const healthHistoryClientId = receiver?.user?.id;
+
+  const { currentData: healthHistoryData } =
+    useGetCoachClientHealthHistoryQuery(healthHistoryClientId!, {
+      skip: !healthHistoryClientId,
+    });
 
   const initials = (() => {
     if (chat?.name) {
@@ -568,7 +570,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             {visibleTabs.map((tab) => (
               <div
                 key={tab.id}
-                className="relative min-w-[120px] w-[120px] flex items-center justify-center"
+                className="relative min-w-[120px] w-fit flex items-center justify-center"
               >
                 <TabsTrigger
                   value={tab.id}
@@ -670,7 +672,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     {chat.description || receiver?.user.email || ""}
                   </span>
                 </div>
-                {chat.participants.length <= 2 && (
+                {chat.participants.length <= 2 && healthHistoryData?.age && (
                   <div className="flex flex-col ml-[25px]">
                     <span className="font-semibold text-[16px] text-[#1D1D1F]">
                       Age
@@ -818,8 +820,19 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <FilesTab chatId={chatId} />
         </TabsContent>
         <TabsContent value="recommended">
-          <RecommendedTab />
+          <RecommendedTab
+            isClient={isClient}
+            clientId={receiver?.user.id || location.pathname.split("/").pop()}
+          />
         </TabsContent>
+        {!isClient && (
+          <TabsContent value="shared-content">
+            <SharedContentTab
+              isClient={false}
+              clientId={receiver?.user.id || location.pathname.split("/").pop()}
+            />
+          </TabsContent>
+        )}
         <TabsContent value="notes">
           <NotesTab chat={chat} search={search} />
         </TabsContent>
