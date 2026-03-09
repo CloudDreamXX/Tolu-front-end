@@ -9,7 +9,7 @@ import { useGetFoldersQuery, useGetFolderQuery } from "entities/folder/api";
 import { IFolder } from "entities/folder";
 import { RootState } from "entities/store";
 import { findFilePath, PathEntry } from "features/wrapper-folder-tree";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffectiveDocumentId } from "./useEffectiveDocumentId";
@@ -79,15 +79,15 @@ export const useDocumentState = () => {
     }
   }, [document]);
 
-  const refreshSharedClients = async () => {
+  const refreshSharedClients = useCallback(async () => {
     if (!documentId) return;
     try {
       const response = await getContentShares(documentId).unwrap();
-      setSharedClients(response.data.shares || []);
+      setSharedClients(response.data || []);
     } catch (err) {
       console.error("Error fetching shared clients:", err);
     }
-  };
+  }, [documentId, getContentShares]);
 
   useEffect(() => {
     if (!foldersResponse || !folderId) return;
@@ -102,14 +102,10 @@ export const useDocumentState = () => {
   }, [foldersResponse, folderResponse, folderId, documentId]);
 
   useEffect(() => {
-    if (!isNewDocument && !isTemporaryDocument && documentId) {
-      const fetchShared = async () => {
-        const response = await getContentShares(documentId).unwrap();
-        setSharedClients(response.data.shares || []);
-      };
-      fetchShared();
-    }
-  }, [documentId, isNewDocument, isTemporaryDocument]);
+    if (!documentId || isTemporaryDocument) return;
+    setSharedClients(null);
+    refreshSharedClients();
+  }, [documentId, isTemporaryDocument, refreshSharedClients]);
 
   return {
     folders,

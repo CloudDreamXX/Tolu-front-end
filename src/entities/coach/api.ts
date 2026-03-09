@@ -7,6 +7,7 @@ import {
   ClientsResponse,
   CoachHealthNote,
   CoachHealthNotesResponse,
+  CoachClientSharedContentResponse,
   ComprehensiveProfile,
   ContentResponse,
   FmpShareRequest,
@@ -16,8 +17,8 @@ import {
   ISessionResponse,
   NewChatTitle,
   RateContent,
+  Share,
   ShareContentData,
-  SharedContent,
   Status,
   UpdateHealthHistoryRequest,
 } from "./model";
@@ -135,11 +136,22 @@ export const coachApi = createApi({
       }),
     }),
 
-    getContentShares: builder.query<BaseResponse<SharedContent>, string>({
+    getContentShares: builder.query<BaseResponse<Share[]>, string>({
       query: (contentId) =>
         API_ROUTES.COACH_ADMIN.GET_SHARED_ACCESS.replace(
           "{content_id}",
           contentId
+        ),
+    }),
+
+    getClientSharedContent: builder.query<
+      BaseResponse<CoachClientSharedContentResponse>,
+      string
+    >({
+      query: (clientId) =>
+        API_ROUTES.COACH_ADMIN.GET_CLIENT_SHARED_CONTENT.replace(
+          "{client_id}",
+          clientId
         ),
     }),
 
@@ -452,6 +464,7 @@ export const {
   useShareContentMutation,
   useGetContentSharesQuery,
   useLazyGetContentSharesQuery,
+  useGetClientSharedContentQuery,
   useRevokeContentMutation,
   useGetAllUserContentQuery,
   useUpdateChatTitleMutation,
