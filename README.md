@@ -22,6 +22,28 @@ cd your-repo-name
 npm install
 ```
 
+## Environment Setup
+
+This project uses Vite environment variables. Keep personal values in `.env.local` (ignored by Git).
+
+1. Create your local env file from the template:
+
+```bash
+cp .env.example .env.local
+```
+
+For Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+2. Update values in `.env.local` for your environment.
+
+Why this helps:
+- `.env` can disappear when opening another branch/worktree because it is untracked.
+- `.env.local` is the recommended local file for Vite and stays out of source control.
+
 ## Development
 
 ```bash

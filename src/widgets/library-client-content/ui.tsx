@@ -472,7 +472,7 @@ export const LibraryClientContent = () => {
             <LibraryCard
               id={it.id}
               key={it.id}
-              title={it.title}
+              title={it.ai_title}
               author={it.author_name}
               onStatusChange={onStatusChange}
               contentStatus={statusMap[it.id]}
@@ -533,7 +533,7 @@ export const LibraryClientContent = () => {
           }));
           const fn = getHeadshotFilename(
             res?.data?.detailed_profile?.headshot_url ??
-              coach.profile?.headshot_url
+            coach.profile?.headshot_url
           );
           if (fn) void fetchPhotoUrl(coach.coach_id, fn);
         } else {
@@ -748,31 +748,31 @@ export const LibraryClientContent = () => {
                     ?.certifications || []
                 ).length > 0
                   ? coachProfiles[
-                      selectedCoachId!
-                    ]?.data?.detailed_profile?.certifications.map(
-                      (
-                        c:
-                          | string
-                          | number
-                          | boolean
-                          | ReactElement<
-                              any,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
-                          | ReactPortal
-                          | null
-                          | undefined,
-                        idx: Key | null | undefined
-                      ) => (
-                        <div
-                          key={idx}
-                          className="truncate text-xs text-blue-700"
+                    selectedCoachId!
+                  ]?.data?.detailed_profile?.certifications.map(
+                    (
+                      c:
+                        | string
+                        | number
+                        | boolean
+                        | ReactElement<
+                          any,
+                          string | JSXElementConstructor<any>
                         >
-                          {c}
-                        </div>
-                      )
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | null
+                        | undefined,
+                      idx: Key | null | undefined
+                    ) => (
+                      <div
+                        key={idx}
+                        className="truncate text-xs text-blue-700"
+                      >
+                        {c}
+                      </div>
                     )
+                  )
                   : "—"}
 
                 <span className="text-muted-foreground">
@@ -897,7 +897,7 @@ export const LibraryClientContent = () => {
 
                   <AccordionContent className="flex flex-col gap-4 pb-2">
                     {Array.isArray(folder.subfolders) &&
-                    folder.subfolders.length > 0 ? (
+                      folder.subfolders.length > 0 ? (
                       folder.subfolders.map((sub, sIdx) => {
                         const subKey = `sub-${sIdx}`;
                         const subOpen = (openSub[folder.id] || "") === subKey;

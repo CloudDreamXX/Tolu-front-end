@@ -101,13 +101,13 @@ export interface AIChatMessage {
 export interface Status {
   id: string;
   status:
-    | "Raw"
-    | "Ready for Review"
-    | "Waiting"
-    | "Second Review Requested"
-    | "Ready to Publish"
-    | "Live"
-    | "Archived";
+  | "Raw"
+  | "Ready for Review"
+  | "Waiting"
+  | "Second Review Requested"
+  | "Ready to Publish"
+  | "Live"
+  | "Archived";
 }
 
 export interface IContentMessage {
@@ -160,6 +160,23 @@ export interface SharedContent {
   content_id: string;
   shares: Share[];
   total_shares: number;
+}
+
+export interface CoachSharedContentItem {
+  share_id: string;
+  content_id: string;
+  title: string;
+  content_type: string;
+  status: string;
+  shared_at: string;
+  folder_id: string;
+}
+
+export interface CoachClientSharedContentResponse {
+  client_id: string;
+  client_email: string;
+  total_shared: number;
+  shared_content: CoachSharedContentItem[];
 }
 
 export interface Content {
