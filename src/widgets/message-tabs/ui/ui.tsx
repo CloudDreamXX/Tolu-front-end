@@ -40,6 +40,7 @@ import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { RecommendedTab } from "./recommended-tab";
+import { SharedContentTab } from "./shared-content-tab";
 import { useLocation } from "react-router-dom";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
@@ -67,6 +68,7 @@ const ALL_TABS: TabItem[] = [
   { id: "plan", label: "Action plan" },
   { id: "medications", label: "Medications" },
   { id: "supplements", label: "Supplements" },
+  { id: "shared-content", label: "Shared content" },
   {
     id: "recommended",
     label: "Recommended for you",
@@ -178,13 +180,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const defaultTab = location.state?.id ?? "messages";
 
   useEffect(() => {
-    if (!chatId) {
-      setChat(null);
-      setSelectedClient(null);
-      setActiveTab("clientInfo");
-      setSearch("");
-      setSelectedOption([]);
-    }
+    setChat(null);
+    setSelectedClient(null);
+    setSearch("");
   }, [chatId]);
 
   useEffect(() => {
@@ -611,8 +609,19 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           <FilesTab chatId={chatId} />
         </TabsContent>
         <TabsContent value="recommended">
-          <RecommendedTab />
+          <RecommendedTab
+            isClient={isClient}
+            clientId={receiver?.user.id || location.pathname.split("/").pop()}
+          />
         </TabsContent>
+        {!isClient && (
+          <TabsContent value="shared-content">
+            <SharedContentTab
+              isClient={false}
+              clientId={receiver?.user.id || location.pathname.split("/").pop()}
+            />
+          </TabsContent>
+        )}
         <TabsContent value="notes">
           <NotesTab chat={chat} search={search} />
         </TabsContent>

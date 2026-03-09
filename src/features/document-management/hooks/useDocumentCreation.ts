@@ -31,7 +31,6 @@ export const useDocumentCreation = () => {
       location,
       documentId,
       folderId,
-      clientId,
       setIsCreatingDocument,
       setDocumentTitle,
       setStreamingContent,
@@ -76,10 +75,10 @@ export const useDocumentCreation = () => {
           }
         },
         async ({ documentId: realDocumentId }) => {
-          if (documentId && clientId) {
+          if (realDocumentId && stateClientId) {
             const data: ShareContentData = {
               content_id: realDocumentId,
-              client_id: clientId,
+              client_id: stateClientId,
             };
             await shareContent(data).unwrap();
           }
@@ -87,9 +86,7 @@ export const useDocumentCreation = () => {
           await loadConversation(documentId);
 
           const response = await getContentShares(realDocumentId).unwrap();
-          if (response.data.shares) {
-            setSharedClients(response.data.shares);
-          }
+          setSharedClients(response.data || []);
           setIsCreatingDocument(false);
           navigate(
             `/content-manager/library/folder/${folderId}/document/${realDocumentId}`,

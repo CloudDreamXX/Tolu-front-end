@@ -133,6 +133,7 @@ export const API_ROUTES = {
     GET_SESSION: "/coach-session/{chat_id}",
     SHARE_CONTENT: "/coach/content-share",
     GET_SHARED_ACCESS: "/coach/{content_id}/shared-access",
+    GET_CLIENT_SHARED_CONTENT: "/coach/client/{client_id}/shared-content",
     REVOKE_CONTENT_ACCESS: "/coach/revoke-content-access",
     CREATE_FOLDER: "/folders/create",
     SAVE_TO_FOLDER: "/folders/save-content",
