@@ -17,10 +17,8 @@ import {
   ISessionResponse,
   NewChatTitle,
   RateContent,
-  CoachSharedContentItem,
   Share,
   ShareContentData,
-  SharedContent,
   Status,
   UpdateHealthHistoryRequest,
 } from "./model";

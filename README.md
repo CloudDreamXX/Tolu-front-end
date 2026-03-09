@@ -41,6 +41,7 @@ Copy-Item .env.example .env.local
 2. Update values in `.env.local` for your environment.
 
 Why this helps:
+
 - `.env` can disappear when opening another branch/worktree because it is untracked.
 - `.env.local` is the recommended local file for Vite and stays out of source control.
 

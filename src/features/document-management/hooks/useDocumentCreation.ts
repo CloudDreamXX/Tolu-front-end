@@ -31,7 +31,6 @@ export const useDocumentCreation = () => {
       location,
       documentId,
       folderId,
-      clientId,
       setIsCreatingDocument,
       setDocumentTitle,
       setStreamingContent,
