@@ -680,44 +680,46 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         {!isClient && (
           <div className="flex flex-col border-x-0 my-[24px]">
             <div className="flex items-center justify-between">
-              {activeTab !== "overview" && <div className="flex items-center ">
-                {isMobileOrTablet && (
-                  <Button
-                    variant="ghost"
-                    className="p-1 mr-3"
-                    onClick={goBackMobile}
-                  >
-                    <MaterialIcon iconName="keyboard_arrow_left" />
-                  </Button>
-                )}
-                <div className="relative mr-3">
-                  <Avatar className="w-10 h-10 ">
-                    <AvatarImage src={chat.avatar_url} />
-                    <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                    {displayName}
-                  </span>
-                  <span className="text-muted-foreground text-[12px]">
-                    {displayEmail}
-                  </span>
-                </div>
-                {chat.participants.length <= 2 && healthHistoryData?.age && (
-                  <div className="flex flex-col ml-[25px]">
+              {activeTab !== "overview" && (
+                <div className="flex items-center ">
+                  {isMobileOrTablet && (
+                    <Button
+                      variant="ghost"
+                      className="p-1 mr-3"
+                      onClick={goBackMobile}
+                    >
+                      <MaterialIcon iconName="keyboard_arrow_left" />
+                    </Button>
+                  )}
+                  <div className="relative mr-3">
+                    <Avatar className="w-10 h-10 ">
+                      <AvatarImage src={chat.avatar_url} />
+                      <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
+                  </div>
+                  <div className="flex flex-col">
                     <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                      Age
+                      {displayName}
                     </span>
                     <span className="text-muted-foreground text-[12px]">
-                      {healthHistoryData?.age ?? "-"}
+                      {displayEmail}
                     </span>
                   </div>
-                )}
-              </div>}
+                  {chat.participants.length <= 2 && healthHistoryData?.age && (
+                    <div className="flex flex-col ml-[25px]">
+                      <span className="font-semibold text-[16px] text-[#1D1D1F]">
+                        Age
+                      </span>
+                      <span className="text-muted-foreground text-[12px]">
+                        {healthHistoryData?.age ?? "-"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
               <div
                 className={cn(
                   "flex items-center gap-3",
@@ -851,13 +853,13 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               chiefConcern={healthHistoryData?.main_health_concerns ?? null}
               medicalDiagnoses={medicalDiagnoses}
               structuralConstraints={structuralConstraints}
-              caseSummary={"High-complexity, medically fragile multisystem case with low physiological reserve."}
+              caseSummary={
+                "High-complexity, medically fragile multisystem case with low physiological reserve."
+              }
             />
 
             <div className="relative mt-auto">
-              <div
-                className="relative flex h-[120px] border border-[#1C63DB] rounded-lg px-[16px] bg-white"
-              >
+              <div className="relative flex h-[120px] border border-[#1C63DB] rounded-lg px-[16px] bg-white">
                 <textarea
                   readOnly
                   placeholder="Ask me anything"
@@ -975,8 +977,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
