@@ -46,11 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-      open: true;
-      mode: "create" | "edit";
-      chat?: DetailsChatItemModel | null;
-      preselectedClients?: string[];
-    };
+    open: true;
+    mode: "create" | "edit";
+    chat?: DetailsChatItemModel | null;
+    preselectedClients?: string[];
+  };
 
 export const ContentManagerMessages: React.FC = () => {
   const ACTIVE_TAB_STORAGE_KEY = "content-manager-messages-active-tab";
@@ -77,8 +77,8 @@ export const ContentManagerMessages: React.FC = () => {
     selectedChat && selectedChat.type === "new_chat"
       ? selectedChat.id
       : selectedChat &&
-          selectedChat.participants &&
-          selectedChat.participants.length === 1
+        selectedChat.participants &&
+        selectedChat.participants.length === 1
         ? selectedChat.participants[0].id
         : null;
 
@@ -105,6 +105,7 @@ export const ContentManagerMessages: React.FC = () => {
     open: false,
   });
   const [searchChats, setSearchChats] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [addClientModal, setAddClientModal] = useState(false);
   const [importClientsPopup, setImportClientsPopup] = useState(false);
   const [activeTab, setActiveTab] = useState<string | undefined>(() => {
@@ -141,7 +142,7 @@ export const ContentManagerMessages: React.FC = () => {
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -449,8 +450,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-            groupModalOpen.mode === "edit" &&
-            groupModalOpen.chat
+              groupModalOpen.mode === "edit" &&
+              groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -610,9 +611,9 @@ export const ContentManagerMessages: React.FC = () => {
             participants: chat.participants.map((participant) =>
               participant.id === client.client_id
                 ? {
-                    ...participant,
-                    client_age: participant.client_age,
-                  }
+                  ...participant,
+                  client_age: participant.client_age,
+                }
                 : participant
             ),
           };
@@ -701,74 +702,49 @@ export const ContentManagerMessages: React.FC = () => {
             width: isMobileOrTablet ? "100%" : `${100 - safeWidthPercent}%`,
           }}
         >
-          <div className="flex justify-between items-center">
-            <div className="w-[316px] ml-[24px] mt-[24px]">
-              <Input
-                type="text"
-                icon={
-                  <MaterialIcon iconName="search" className="text-[5F5F65]" />
-                }
-                placeholder="Search"
-                value={searchChats}
-                onChange={(e) => setSearchChats(e.target.value)}
-                className="w-full rounded-[1000px] border border-[#D6D7D9] px-[12px] py-[10px] pl-[40px] text-[14px]"
-              />
-            </div>
-            <div className="flex items-center gap-[24px] mr-[24px] mt-[24px]">
-              {selectedClientId && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant={"ghost"}>
-                      <MaterialIcon
-                        iconName="more_vert"
-                        className="rotate-[90deg]"
-                      />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
-                      Delete
-                    </DropdownMenuItem>
-                    {(() => {
-                      const client = allClients.find(
-                        (c) => c.client_id === selectedClientId
-                      );
-                      if (
-                        client &&
-                        client.status &&
-                        client.status.toLowerCase() === "pending"
-                      ) {
-                        return (
-                          <DropdownMenuItem
-                            onClick={() => handleResendInvite(client.client_id)}
-                            disabled={resendLoading}
-                          >
-                            {resendLoading ? "Resending..." : "Resend Invite"}
-                          </DropdownMenuItem>
-                        );
-                      }
-                      return null;
-                    })()}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-              {confirmDelete && (
-                <ConfirmDeleteModal
-                  onCancel={() => setConfirmDelete(false)}
-                  onDelete={handleDeleteClient}
+          <div className="flex justify-between items-center mr-[24px]">
+            <div className=" ml-auto mt-[24px] flex items-center">
+              {isSearchOpen ? (
+                <Input
+                  type="text"
+                  icon={
+                    <MaterialIcon iconName="search" className="text-[5F5F65]" />
+                  }
+                  placeholder="Search"
+                  value={searchChats}
+                  onChange={(e) => setSearchChats(e.target.value)}
+                  autoFocus
+                  onBlur={() => {
+                    if (!searchChats.trim()) {
+                      setIsSearchOpen(false);
+                    }
+                  }}
+                  className="w-[316px] rounded-[1000px] border border-[#D6D7D9] px-[12px] py-[10px] pl-[40px] text-[14px]"
                 />
+              ) : (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full w-[32px] h-[32px]"
+                  onClick={() => setIsSearchOpen(true)}
+                >
+                  <MaterialIcon iconName="search" className="text-[#1C63DB]" />
+                </Button>
               )}
+            </div>
+            <div className="flex items-center gap-[24px] ml-[24px] mt-[24px]">
               <Button
                 variant="brightblue"
-                className="rounded-full w-[32px] h-[32px]"
+                className="flex items-center justify-center rounded-full w-[24px] h-[24px] px-0 py-0"
               >
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="brightblue"
-                      className="rounded-full w-[32px] h-[32px]"
+                      className="flex items-center justify-center rounded-full w-[24px] h-[24px] px-0 py-0"
                     >
-                      <MaterialIcon iconName="add" className="text-white" />
+                      <MaterialIcon iconName="add" size={18} className="text-white" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -815,6 +791,49 @@ export const ContentManagerMessages: React.FC = () => {
                   />
                 )}
               </Button>
+              {selectedClientId && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant={"ghost"} className="p-0 w-fit">
+                      <MaterialIcon
+                        iconName="more_vert"
+                        className="rotate-[90deg] text-[#1C63DB]"
+                      />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
+                      Delete
+                    </DropdownMenuItem>
+                    {(() => {
+                      const client = allClients.find(
+                        (c) => c.client_id === selectedClientId
+                      );
+                      if (
+                        client &&
+                        client.status &&
+                        client.status.toLowerCase() === "pending"
+                      ) {
+                        return (
+                          <DropdownMenuItem
+                            onClick={() => handleResendInvite(client.client_id)}
+                            disabled={resendLoading}
+                          >
+                            {resendLoading ? "Resending..." : "Resend Invite"}
+                          </DropdownMenuItem>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {confirmDelete && (
+                <ConfirmDeleteModal
+                  onCancel={() => setConfirmDelete(false)}
+                  onDelete={handleDeleteClient}
+                />
+              )}
             </div>
           </div>
           <div className="flex">
@@ -865,11 +884,10 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
-            groupModalOpen.open && groupModalOpen.mode === "edit"
-              ? (groupModalOpen.chat?.chat_id ?? "new")
-              : "new"
-          }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
+            ? (groupModalOpen.chat?.chat_id ?? "new")
+            : "new"
+            }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={

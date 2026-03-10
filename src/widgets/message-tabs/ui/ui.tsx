@@ -38,14 +38,27 @@ import { ParticipantsModal } from "./components/ParticipantsModal";
 import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
+import { OverviewTab } from "./overview-tab";
 import { RecommendedTab } from "./recommended-tab";
 import { SharedContentTab } from "./shared-content-tab";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { MedicationsTab } from "./medications-tab";
 import { SupplementsTab } from "./supplements-tab";
 import { CoachDailyJournal } from "./journals-tab";
 import { useGetCoachClientHealthHistoryQuery } from "entities/health-history";
+import {
+  CANCER,
+  CARDIOVASCULAR,
+  GASTROINTESTINAL,
+  GENITAL_URINARY,
+  HORMONES_METABOLIC,
+  IMMUNE_INFLAMMATORY,
+  MISCELLANEOUS,
+  MUSCULOSKELETAL,
+  NEUROLOGIC_MOOD,
+  RESPIRATORY,
+  SKIN,
+} from "widgets/health-profile-form/ui/medical-history-step/lib";
 
 type TabItem = {
   id: string;
@@ -56,7 +69,7 @@ type TabItem = {
 };
 
 const ALL_TABS: TabItem[] = [
-  { id: "profile", label: "Case" },
+  { id: "overview", label: "Overview" },
   { id: "messages", label: "Messages" },
   { id: "notes", label: "Notes", requiresNotes: true },
   { id: "files", label: "Files", requiresFiles: true },
@@ -75,6 +88,8 @@ const ALL_TABS: TabItem[] = [
     requiresRecommended: true,
   },
 ];
+
+const MORE_MENU_TAB_IDS = new Set(["medications", "supplements"]);
 
 const CLIENT_TABS: TabItem[] = [
   { id: "messages", label: "Chat" },
@@ -104,6 +119,28 @@ interface MessageTabsProps {
   setActiveTab?: (tab: string) => void;
 }
 
+const normalizeTabId = (tab?: string) => {
+  if (!tab) return tab;
+  return tab === "profile" ? "overview" : tab;
+};
+
+const toSnakeCase = (str: string) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+const getYesConditionLabels = (
+  data: Record<string, any> | undefined,
+  items: Array<{ label: string; name: string }>
+) => {
+  if (!data) return [];
+
+  return items
+    .filter(({ name }) => {
+      const condition = data[toSnakeCase(name)];
+      return condition?.status === "yes";
+    })
+    .map(({ label }) => label);
+};
+
 export const MessageTabs: React.FC<MessageTabsProps> = ({
   chatId,
   goBackMobile,
@@ -122,7 +159,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const navigate = useNavigate();
   const queryTab = useMemo(() => {
     const tab = new URLSearchParams(location.search).get("tab");
-    return tab || undefined;
+    return normalizeTabId(tab || undefined);
   }, [location.search]);
 
   const {
@@ -144,24 +181,27 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   );
   const isClient = profile?.roleName === "Client";
   const [internalActiveTab, setInternalActiveTab] = useState<string>(() => {
-    return queryTab ?? (isClient ? "messages" : "profile");
+    return queryTab ?? (isClient ? "messages" : "overview");
   });
   const isControlled =
     controlledActiveTab !== undefined && controlledSetActiveTab !== undefined;
-  const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
+  const activeTab = isControlled
+    ? (normalizeTabId(controlledActiveTab) ?? "overview")
+    : internalActiveTab;
   const setActiveTab = isControlled
     ? controlledSetActiveTab
     : setInternalActiveTab;
   const setActiveTabWithLocation = useCallback(
     (tab: string) => {
-      setActiveTab(tab);
+      const normalizedTab = normalizeTabId(tab) || "overview";
+      setActiveTab(normalizedTab);
 
       const params = new URLSearchParams(location.search);
-      if (params.get("tab") === tab) {
+      if (normalizeTabId(params.get("tab") || undefined) === normalizedTab) {
         return;
       }
 
-      params.set("tab", tab);
+      params.set("tab", normalizedTab);
       navigate(
         {
           pathname: location.pathname,
@@ -175,14 +215,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [search, setSearch] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
-  const [pinnedTabs, setPinnedTabs] = useState<string[]>([
-    "profile",
-    "messages",
-    "notes",
-    "files",
-  ]);
-
-  const pinned = new Set(pinnedTabs);
   const isGroupChat =
     (chat?.participants && chat?.participants?.length > 2) ||
     chat?.chat_type === "group";
@@ -196,7 +228,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
 
     return ALL_TABS.filter((tab) => {
-      if (isGroupChat && tab.id === "profile") return false;
+      if (isGroupChat && tab.id === "overview") return false;
       if (tab.requiresFiles && hideFiles) return false;
       if (tab.requiresNotes && hideNotes) return false;
       if (tab.requiresRecommended && !isClient) return false;
@@ -206,15 +238,17 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
   const visibleTabs = isClient
     ? availableTabs
-    : availableTabs.filter((t) => pinned.has(t.id));
+    : availableTabs.filter((t) => !MORE_MENU_TAB_IDS.has(t.id));
 
   const overflowTabs = isClient
     ? []
-    : availableTabs.filter((t) => !pinned.has(t.id));
+    : availableTabs.filter((t) => MORE_MENU_TAB_IDS.has(t.id));
 
   const defaultTab =
     queryTab ||
-    (isClient || isGroupChat ? "messages" : (location.state?.id ?? "profile"));
+    (isClient || isGroupChat
+      ? "messages"
+      : (normalizeTabId(location.state?.id) ?? "overview"));
 
   useEffect(() => {
     if (!queryTab) {
@@ -236,7 +270,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   }, [chatId]);
 
   useEffect(() => {
-    if (isGroupChat && activeTab === "profile") {
+    if (isGroupChat && activeTab === "overview") {
       setActiveTabWithLocation("messages");
     }
   }, [isGroupChat, activeTab, setActiveTabWithLocation]);
@@ -393,6 +427,45 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;
 
+  const displayName =
+    chat.name ||
+    (receiver?.user.first_name &&
+      receiver?.user.last_name &&
+      `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
+    receiver?.user.name ||
+    "Unknown name";
+
+  const displayEmail = chat.description || receiver?.user.email || "";
+
+  const coachDisplayName =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+    profile?.name ||
+    profile?.email ||
+    "-";
+
+  const allMedicalConditionGroups = [
+    GASTROINTESTINAL,
+    HORMONES_METABOLIC,
+    CARDIOVASCULAR,
+    CANCER,
+    GENITAL_URINARY,
+    MUSCULOSKELETAL,
+    IMMUNE_INFLAMMATORY,
+    RESPIRATORY,
+    SKIN,
+    NEUROLOGIC_MOOD,
+    MISCELLANEOUS,
+  ];
+
+  const medicalDiagnoses = allMedicalConditionGroups.flatMap((group) =>
+    getYesConditionLabels(healthHistoryData as Record<string, any>, group)
+  );
+
+  const structuralConstraints = getYesConditionLabels(
+    healthHistoryData as Record<string, any>,
+    MUSCULOSKELETAL
+  );
+
   return (
     <main
       className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}
@@ -421,15 +494,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               </div>
               <div className="flex flex-col">
                 <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                  {chat.name ||
-                    (receiver?.user.first_name &&
-                      receiver?.user.last_name &&
-                      `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
-                    receiver?.user.name ||
-                    "Unknown name"}
+                  {displayName}
                 </span>
                 <span className="text-muted-foreground text-[12px]">
-                  {chat.description || receiver?.user.email || ""}
+                  {displayEmail}
                 </span>
               </div>
             </div>
@@ -578,24 +646,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 >
                   {tab.label}
                 </TabsTrigger>
-
-                {activeTab === tab.id && (
-                  <Button
-                    size="icon"
-                    variant="unstyled"
-                    className="absolute z-50 text-[#B3BCC8] hover:text-black rounded-full p-[1px] -right-[4px] -top-[4px]"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPinnedTabs((prev) =>
-                        prev.length <= 3
-                          ? prev
-                          : prev.filter((id) => id !== tab.id)
-                      );
-                    }}
-                  >
-                    <MaterialIcon iconName="close" size={14} />
-                  </Button>
-                )}
               </div>
             ))}
             <DropdownMenu>
@@ -612,7 +662,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 {overflowTabs.map((tab) => (
                   <DropdownMenuItem
                     key={tab.id}
-                    className="flex items-center justify-between gap-2 p-[4px] pl-[16px]"
+                    className="flex items-center justify-between gap-2 p-[8px] pl-[16px]"
                   >
                     <TabsTrigger
                       value={tab.id}
@@ -620,16 +670,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     >
                       {tab.label}
                     </TabsTrigger>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPinnedTabs((prev) => [...prev, tab.id]);
-                      }}
-                    >
-                      <MaterialIcon iconName="push_pin" size={16} />
-                    </Button>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -640,7 +680,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         {!isClient && (
           <div className="flex flex-col border-x-0 my-[24px]">
             <div className="flex items-center justify-between">
-              <div className="flex items-center ">
+              {activeTab !== "overview" && <div className="flex items-center ">
                 {isMobileOrTablet && (
                   <Button
                     variant="ghost"
@@ -661,15 +701,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-[16px] text-[#1D1D1F]">
-                    {chat.name ||
-                      (receiver?.user.first_name &&
-                        receiver?.user.last_name &&
-                        `${receiver?.user.first_name} ${receiver?.user.last_name}`) ||
-                      receiver?.user.name ||
-                      "Unknown name"}
+                    {displayName}
                   </span>
                   <span className="text-muted-foreground text-[12px]">
-                    {chat.description || receiver?.user.email || ""}
+                    {displayEmail}
                   </span>
                 </div>
                 {chat.participants.length <= 2 && healthHistoryData?.age && (
@@ -682,7 +717,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
                     </span>
                   </div>
                 )}
-              </div>
+              </div>}
               <div
                 className={cn(
                   "flex items-center gap-3",
@@ -800,12 +835,64 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           </div>
         )}
 
-        <TabsContent value="profile">
-          <ClientComprehensiveSummary
-            onOpenChange={() => {}}
-            clientId={receiver?.user.id || location.pathname.split("/").pop()!}
-            asDialog={false}
-          />
+        <TabsContent value="overview">
+          <div className="space-y-2 h-[calc(100vh-220px)]">
+            <OverviewTab
+              clientName={displayName}
+              clientEmail={displayEmail}
+              coachName={coachDisplayName}
+              onHealthProfileClick={() => handleSelectClient(receiver?.user.id)}
+              age={healthHistoryData?.age ?? null}
+              cycles={
+                healthHistoryData?.menses_pms_pain ??
+                healthHistoryData?.cycle_second_half_symptoms ??
+                null
+              }
+              chiefConcern={healthHistoryData?.main_health_concerns ?? null}
+              medicalDiagnoses={medicalDiagnoses}
+              structuralConstraints={structuralConstraints}
+              caseSummary={"High-complexity, medically fragile multisystem case with low physiological reserve."}
+            />
+
+            <div className="relative mt-auto">
+              <div
+                className="relative flex h-[120px] border border-[#1C63DB] rounded-lg px-[16px] bg-white"
+              >
+                <textarea
+                  readOnly
+                  placeholder="Ask me anything"
+                  value=""
+                  className="w-full h-[115px] py-[10px] bg-transparent placeholder:text-[#B3BCC8] text-[14px] font-medium resize-none focus:outline-none focus:ring-0 focus:border-transparent"
+                  style={{
+                    WebkitTextSizeAdjust: "100%",
+                    textSizeAdjust: "100%",
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute left-[12px] bottom-[8px] text-[#1D1D1F] rounded-full w-[40px] h-[40px] hover:bg-secondary/80"
+                >
+                  <MaterialIcon iconName="attach_file" size={20} fill={1} />
+                </Button>
+                <Button
+                  type="button"
+                  className="h-[44px] w-[44px] p-0 rounded-full text-[#1C63DB] mr-2"
+                  title="Read text"
+                >
+                  <MaterialIcon iconName="mic" size={24} />
+                </Button>
+                <Button
+                  type="button"
+                  className="h-[44px] w-[44px] p-0 rounded-full text-[#1C63DB] disabled:text-[#5F5F65] disabled:opacity-1"
+                  title="Send"
+                  disabled
+                >
+                  <MaterialIcon iconName="send" fill={1} size={24} />
+                </Button>
+              </div>
+            </div>
+          </div>
         </TabsContent>
         <TabsContent value="messages">
           <MessagesTab
@@ -888,8 +975,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
