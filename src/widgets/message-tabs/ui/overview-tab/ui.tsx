@@ -6,6 +6,7 @@ type OverviewTabProps = {
   clientName?: string;
   clientEmail?: string;
   coachName?: string;
+  clientStatus?: string | null;
   onHealthProfileClick?: () => void;
   age?: string | number | null;
   cycles?: string | null;
@@ -118,24 +119,31 @@ const STATIC_RIGHT_SECTIONS = [
   },
 ];
 
+type ViewingOption = {
+  id: string;
+  label: string;
+  updatedAt: string;
+  editorName: string;
+};
+
 const ViewingDropdown = ({
-  label = "Latest",
+  label,
   className,
-  showMeta,
-  updatedAt,
-  editorName,
+  options,
+  selectedOption,
+  onSelect,
 }: {
-  label?: string;
+  label: string;
   className?: string;
-  showMeta?: boolean;
-  updatedAt?: string;
-  editorName?: string;
+  options: ViewingOption[];
+  selectedOption: ViewingOption | null;
+  onSelect: (option: ViewingOption) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={`space-y-1 ${className ?? ""}`}>
-      {showMeta ? (
+    <div className={`relative space-y-1 ${className ?? ""}`}>
+      <div>
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -148,19 +156,46 @@ const ViewingDropdown = ({
             className="text-[#1D1D1F]"
           />
         </button>
-      ) : (
-        <div className="text-[12px] leading-[18px] text-[#1D1D1F]">{label}</div>
-      )}
 
-      {showMeta && isOpen && (
+        {isOpen && (
+          <div className="absolute left-0 top-[calc(100%+6px)] min-w-[180px] rounded-[10px] border border-[#ECEFF4] bg-white py-[8px] px-[12px] shadow-[0_6px_18px_rgba(29,29,31,0.12)] z-10">
+            {options.map((option) => {
+              const isSelected = selectedOption?.id === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => {
+                    onSelect(option);
+                    setIsOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between gap-3 text-left text-[12px] leading-[20px] text-[#1D1D1F] px-1 py-[4px] hover:bg-[#F4F8FF]"
+                >
+                  <span>{option.label}</span>
+                  {isSelected ? (
+                    <MaterialIcon
+                      iconName="check"
+                      size={16}
+                      className="text-[#1C63DB]"
+                    />
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {selectedOption && (
         <div className="flex flex-col gap-[5px]">
           <div className="flex items-center gap-2 text-[12px] leading-[18px] text-[#1D1D1F]">
             <MaterialIcon iconName="calendar_today" size={16} />
-            <span>updated: {updatedAt ?? "-"}</span>
+            <span>updated: {selectedOption.updatedAt}</span>
           </div>
           <div className="flex items-center gap-2 text-[12px] leading-[18px] text-[#1D1D1F]">
             <MaterialIcon iconName="person" size={16} />
-            <span>by: {editorName ?? "-"}</span>
+            <span>by: {selectedOption.editorName}</span>
           </div>
         </div>
       )}
@@ -172,6 +207,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   clientName,
   clientEmail,
   coachName,
+  clientStatus,
   onHealthProfileClick,
   age,
   cycles,
@@ -182,6 +218,14 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   const diagnoses = toDisplayList(medicalDiagnoses);
   const constraints = toDisplayList(structuralConstraints);
   const initials = getInitials(clientName, clientEmail);
+  const isClientActive = (clientStatus || "").toLowerCase() === "active";
+  const shouldDisableOverviewActions = !isClientActive;
+  const [leftSelectedViewingId, setLeftSelectedViewingId] = useState<
+    string | null
+  >(null);
+  const [rightSelectedViewingId, setRightSelectedViewingId] = useState<
+    string | null
+  >(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     age: true,
     cycles: true,
@@ -199,6 +243,49 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   const toggle = (id: string) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const viewingOptions: ViewingOption[] = [
+    {
+      id: "latest",
+      label: "Latest",
+      updatedAt: "Mar 3, 2026, 14:32",
+      editorName: toDisplayValue(coachName),
+    },
+    {
+      id: "mar-3-2026-1432",
+      label: "Mar 3, 2026, 14:32",
+      updatedAt: "Mar 3, 2026, 14:32",
+      editorName: toDisplayValue(coachName),
+    },
+    {
+      id: "mar-1-2026-0911",
+      label: "Mar 1, 2026, 09:11",
+      updatedAt: "Mar 1, 2026, 09:11",
+      editorName: toDisplayValue(coachName),
+    },
+    {
+      id: "feb-25-2026-1704",
+      label: "Feb 25, 2026, 17:04",
+      updatedAt: "Feb 25, 2026, 17:04",
+      editorName: toDisplayValue(coachName),
+    },
+  ];
+
+  const leftSelectedViewingOption = viewingOptions.find(
+    (option) => option.id === leftSelectedViewingId
+  );
+
+  const rightSelectedViewingOption = viewingOptions.find(
+    (option) => option.id === rightSelectedViewingId
+  );
+
+  const leftViewingLabel = leftSelectedViewingOption
+    ? `Viewing: ${leftSelectedViewingOption.label}`
+    : "Viewing: Choose";
+
+  const rightViewingLabel = rightSelectedViewingOption
+    ? `Viewing: ${rightSelectedViewingOption.label}`
+    : "Viewing: Choose";
 
   return (
     <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-350px)] pr-1">
@@ -223,16 +310,17 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           <div className="bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4] rounded-[16px] p-4 space-y-4">
             <div className="flex items-center gap-2 text-[12px] leading-[18px] text-[#1D1D1F]">
               <ViewingDropdown
-                label="Viewing: Latest"
+                label={leftViewingLabel}
                 className="min-w-[86px]"
-                showMeta
-                updatedAt="Mar 3, 2026, 14:32"
-                editorName={toDisplayValue(coachName)}
+                options={viewingOptions}
+                selectedOption={leftSelectedViewingOption ?? null}
+                onSelect={(option) => setLeftSelectedViewingId(option.id)}
               />
             </div>
             <Button
-              variant="unstyled"
-              onClick={onHealthProfileClick}
+              variant="brightblue"
+              onClick={shouldDisableOverviewActions ? undefined : onHealthProfileClick}
+              disabled={shouldDisableOverviewActions}
               className="flex items-center justify-center h-[33px] bg-[#1C63DB] text-white py-[8px] px-[12px] rounded-[8px] text-[14px] font-medium"
             >
               Health profile
@@ -290,11 +378,11 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           <div>
             <div className="flex items-center gap-2 text-[12px] leading-[18px] text-[#1D1D1F] mb-[5px]">
               <ViewingDropdown
-                label="Viewing: Latest"
+                label={rightViewingLabel}
                 className="min-w-[86px]"
-                showMeta
-                updatedAt="Mar 3, 2026, 14:32"
-                editorName={toDisplayValue(coachName)}
+                options={viewingOptions}
+                selectedOption={rightSelectedViewingOption ?? null}
+                onSelect={(option) => setRightSelectedViewingId(option.id)}
               />
             </div>
           </div>
@@ -302,6 +390,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           <div className="py-1">
             <Button
               variant="brightblue"
+              disabled={shouldDisableOverviewActions}
               className="h-[33px] px-4 rounded-[8px] text-[14px] leading-[20px]"
             >
               Intake analysis

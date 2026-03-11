@@ -34,6 +34,7 @@ import {
   TabsTrigger,
 } from "shared/ui";
 import { SelectedClientModal } from "widgets/SelectedClientModal";
+import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { ParticipantsModal } from "./components/ParticipantsModal";
 import { FilesTab } from "./files-tab";
 import { MessagesTab } from "./messages-tab";
@@ -179,6 +180,9 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(
     null
   );
+  const [healthProfileClientId, setHealthProfileClientId] = useState<
+    string | null
+  >(null);
   const isClient = profile?.roleName === "Client";
   const [internalActiveTab, setInternalActiveTab] = useState<string>(() => {
     return queryTab ?? (isClient ? "messages" : "overview");
@@ -366,6 +370,14 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
   };
 
+  const handleOpenHealthProfile = (clientId: string | undefined) => {
+    if (!clientId) {
+      return;
+    }
+
+    setHealthProfileClientId(clientId);
+  };
+
   const receiver = useMemo(
     () => chat?.participants?.find((p) => p.user.email !== profile?.email),
     [chat, profile?.email]
@@ -423,6 +435,20 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
     return "UN";
   })();
+
+  const selectedClientStatus = useMemo(() => {
+    const currentUserId = receiver?.user?.id || receiver?.user?.user_id || chatId;
+
+    if (!currentUserId || !clients?.data?.clients) {
+      return null;
+    }
+
+    const client = clients.data.clients.find(
+      (item) => item.client_id === currentUserId
+    );
+
+    return client?.status ?? null;
+  }, [receiver, chatId, clients]);
 
   if (isLoading) return <MessageTabsLoadingSkeleton />;
   if (!chat) return null;
@@ -843,7 +869,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
               clientName={displayName}
               clientEmail={displayEmail}
               coachName={coachDisplayName}
-              onHealthProfileClick={() => handleSelectClient(receiver?.user.id)}
+              clientStatus={selectedClientStatus}
+              onHealthProfileClick={() =>
+                handleOpenHealthProfile(receiver?.user.id)
+              }
               age={healthHistoryData?.age ?? null}
               cycles={
                 healthHistoryData?.menses_pms_pain ??
@@ -977,10 +1006,23 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
+        />
+      )}
+
+      {healthProfileClientId && (
+        <ClientComprehensiveSummary
+          clientId={healthProfileClientId}
+          asDialog
+          open={Boolean(healthProfileClientId)}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setHealthProfileClientId(null);
+            }
+          }}
         />
       )}
 
