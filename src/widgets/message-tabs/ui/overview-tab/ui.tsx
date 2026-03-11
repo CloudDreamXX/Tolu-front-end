@@ -319,7 +319,9 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
             <Button
               variant="brightblue"
-              onClick={shouldDisableOverviewActions ? undefined : onHealthProfileClick}
+              onClick={
+                shouldDisableOverviewActions ? undefined : onHealthProfileClick
+              }
               disabled={shouldDisableOverviewActions}
               className="flex items-center justify-center h-[33px] bg-[#1C63DB] text-white py-[8px] px-[12px] rounded-[8px] text-[14px] font-medium"
             >

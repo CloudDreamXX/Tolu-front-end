@@ -218,16 +218,16 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
   return (
     <>
       {folders.map((folder) => (
-        <div key={folder.id} className="relative ml-4 select-none">
+        <div key={folder.id} className="relative ml-2 select-none max-w-full">
           <div
-            className="flex items-center px-4 py-[7px]"
+            className="flex items-center w-full min-w-0 px-2 py-[7px]"
             onDragOver={(e) => onFolderDragOver(e, folder.id, folder)}
             onDragLeave={onFolderDragLeave}
             onDrop={(e) => onFolderDrop(e, folder.id)}
           >
             <div
               className={cn(
-                "flex items-center gap-3 cursor-pointer transition-colors",
+                "flex items-center gap-2 cursor-pointer transition-colors min-w-0 flex-1",
                 folderId === folder.id ? "text-blue-500" : "",
                 isSameRoot(allFolders, dragOverFolderId, rootFolderId) &&
                   dragOverFolderId === folder.id &&
@@ -247,7 +247,9 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
               {level === 0 ? null : (
                 <MaterialIcon iconName="folder_open" fill={1} />
               )}
-              <span>{folder.name}</span>
+              <span className="truncate text-[13px] block max-w-[112px]">
+                {folder.name}
+              </span>
             </div>
 
             <span className="rounded-full bg-[#F3F6FB] text-[10px] text-[#1C63DB] mx-1 p-2 max-w-5 max-h-5 flex items-center justify-center">
@@ -309,7 +311,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
           {openFolders.has(folder.id) && (
             <div
               className={cn(
-                "pl-8",
+                "pl-4 min-w-0 max-w-full",
                 dragOverFolderId === folder.id && "bg-blue-50"
               )}
               onDrop={(e) => onFolderDrop(e, folder.id)}
@@ -320,7 +322,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                 <div
                   key={content.id}
                   className={cn(
-                    "flex items-center gap-1.5 px-4 py-[7px] pl-4 group rounded-md transition cursor-grab ",
+                    "flex items-center gap-1.5 w-full min-w-0 px-2 py-[7px] group rounded-md transition cursor-grab",
                     documentId === content.id
                       ? "text-blue-500"
                       : "hover:bg-gray-100"
@@ -386,7 +388,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({
                   <TooltipProvider delayDuration={500}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-nowrap text-[14px] font-semibold group-hover:text-blue-500 truncate max-w-[80px] block">
+                        <span className="text-[13px] font-semibold group-hover:text-blue-500 truncate max-w-[92px] block">
                           {content.aiTitle ?? content.title}
                         </span>
                       </TooltipTrigger>

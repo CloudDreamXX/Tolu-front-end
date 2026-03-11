@@ -188,7 +188,12 @@ export const WrapperFolderTree = ({
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      style={{ maxHeight: "400px", overflowY: "auto" }}
+      style={{
+        maxHeight: "400px",
+        overflowY: "auto",
+        overflowX: "hidden",
+        width: "100%",
+      }}
     >
       {isLoading ? (
         <FolderSkeletonRow />

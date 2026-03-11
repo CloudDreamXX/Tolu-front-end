@@ -72,14 +72,13 @@ type TabItem = {
 const ALL_TABS: TabItem[] = [
   { id: "overview", label: "Overview" },
   { id: "messages", label: "Messages" },
-  { id: "notes", label: "Notes", requiresNotes: true },
-  { id: "files", label: "Files", requiresFiles: true },
+  { id: "intake", label: "Intake" },
+  { id: "journal", label: "Journal" },
   { id: "labs", label: "Labs" },
-  { id: "providers", label: "Providers" },
-  { id: "biometrics", label: "Biometrics" },
-  { id: "journals", label: "Journals" },
-  { id: "research", label: "Research" },
-  { id: "plan", label: "Action plan" },
+  { id: "protocols", label: "Protocols" },
+  { id: "files", label: "Files", requiresFiles: true },
+  { id: "collaborations", label: "Collaborations" },
+  { id: "notes", label: "Notes", requiresNotes: true },
   { id: "medications", label: "Medications" },
   { id: "supplements", label: "Supplements" },
   { id: "shared-content", label: "Shared content" },
@@ -90,7 +89,11 @@ const ALL_TABS: TabItem[] = [
   },
 ];
 
-const MORE_MENU_TAB_IDS = new Set(["medications", "supplements"]);
+const MORE_MENU_TAB_IDS = new Set([
+  "medications",
+  "supplements",
+  "shared-content",
+]);
 
 const CLIENT_TABS: TabItem[] = [
   { id: "messages", label: "Chat" },
@@ -437,7 +440,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
   })();
 
   const selectedClientStatus = useMemo(() => {
-    const currentUserId = receiver?.user?.id || receiver?.user?.user_id || chatId;
+    const currentUserId =
+      receiver?.user?.id || receiver?.user?.user_id || chatId;
 
     if (!currentUserId || !clients?.data?.clients) {
       return null;
@@ -494,7 +498,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
 
   return (
     <main
-      className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}
+      className={`flex flex-col w-full ${isClient ? "min-h-screen" : "lg:pl-0 lg:w-[calc(100%-116px)] h-[calc(100vh-65px)]"} h-full px-4 py-6 md:p-6 lg:p-[24px]`}
     >
       {isClient && (
         <div className="flex flex-col border-x-0 my-[24px]">
@@ -664,7 +668,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             {visibleTabs.map((tab) => (
               <div
                 key={tab.id}
-                className="relative min-w-[120px] w-fit flex items-center justify-center"
+                className="relative min-w-[113px] w-fit flex items-center justify-center"
               >
                 <TabsTrigger
                   value={tab.id}
@@ -960,7 +964,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         <TabsContent value="supplements">
           <SupplementsTab chat={chat} search={search} />
         </TabsContent>
-        <TabsContent value="providers">
+        <TabsContent value="collaborations">
           {clientCoaches && clientCoaches.data.coaches.length ? (
             <ul className="p-2">
               {clientCoaches.data.coaches.map((c: any) => {
@@ -989,7 +993,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </ul>
           ) : (
             <div className="p-4 text-sm text-muted-foreground">
-              No providers yet.
+              No collaborations yet.
             </div>
           )}
         </TabsContent>
@@ -1006,8 +1010,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => { }}
-          onDelete={() => { }}
+          onEdit={() => {}}
+          onDelete={() => {}}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
