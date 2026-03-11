@@ -46,11 +46,11 @@ import { CreateGroupModal } from "widgets/message-tabs/ui/components/CreateGroup
 type GroupModalState =
   | { open: false }
   | {
-    open: true;
-    mode: "create" | "edit";
-    chat?: DetailsChatItemModel | null;
-    preselectedClients?: string[];
-  };
+      open: true;
+      mode: "create" | "edit";
+      chat?: DetailsChatItemModel | null;
+      preselectedClients?: string[];
+    };
 
 export const ContentManagerMessages: React.FC = () => {
   const ACTIVE_TAB_STORAGE_KEY = "content-manager-messages-active-tab";
@@ -77,8 +77,8 @@ export const ContentManagerMessages: React.FC = () => {
     selectedChat && selectedChat.type === "new_chat"
       ? selectedChat.id
       : selectedChat &&
-        selectedChat.participants &&
-        selectedChat.participants.length === 1
+          selectedChat.participants &&
+          selectedChat.participants.length === 1
         ? selectedChat.participants[0].id
         : null;
 
@@ -143,7 +143,7 @@ export const ContentManagerMessages: React.FC = () => {
 
   const safeWidthPercent = Math.min(50, Math.max(10, widthPercent));
 
-  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => { });
+  const handlerRef = useRef<(m: ChatMessageModel) => void>(() => {});
 
   useEffect(() => {
     if (data && data.data?.clients) {
@@ -462,8 +462,8 @@ export const ContentManagerMessages: React.FC = () => {
         await updateGroupChatMutation({
           chatId:
             groupModalOpen.open &&
-              groupModalOpen.mode === "edit" &&
-              groupModalOpen.chat
+            groupModalOpen.mode === "edit" &&
+            groupModalOpen.chat
               ? groupModalOpen.chat.chat_id
               : "",
           payload: {
@@ -623,9 +623,9 @@ export const ContentManagerMessages: React.FC = () => {
             participants: chat.participants.map((participant) =>
               participant.id === client.client_id
                 ? {
-                  ...participant,
-                  client_age: participant.client_age,
-                }
+                    ...participant,
+                    client_age: participant.client_age,
+                  }
                 : participant
             ),
           };
@@ -716,17 +716,24 @@ export const ContentManagerMessages: React.FC = () => {
         >
           <div className="flex justify-between items-center mr-[24px]">
             <div className=" ml-auto mt-[24px] flex items-center">
-              <div ref={searchContainerRef} className="relative flex items-center h-[40px]">
+              <div
+                ref={searchContainerRef}
+                className="relative flex items-center h-[40px]"
+              >
                 <div
-                  className={`origin-right overflow-hidden transition-all duration-350 ease-in-out ${isSearchOpen
-                    ? "w-[316px] opacity-100 translate-x-0"
-                    : "w-0 opacity-0 translate-x-2 pointer-events-none"
-                    }`}
+                  className={`origin-right overflow-hidden transition-all duration-350 ease-in-out ${
+                    isSearchOpen
+                      ? "w-[316px] opacity-100 translate-x-0"
+                      : "w-0 opacity-0 translate-x-2 pointer-events-none"
+                  }`}
                 >
                   <Input
                     type="text"
                     icon={
-                      <MaterialIcon iconName="search" className="text-[5F5F65]" />
+                      <MaterialIcon
+                        iconName="search"
+                        className="text-[5F5F65]"
+                      />
                     }
                     placeholder="Search"
                     value={searchChats}
@@ -744,10 +751,11 @@ export const ContentManagerMessages: React.FC = () => {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className={`absolute right-0 rounded-full w-[32px] h-[32px] transition-all duration-350 ease-in-out ${isSearchOpen
-                    ? "opacity-0 scale-90 translate-x-1 pointer-events-none"
-                    : "opacity-100 scale-100 translate-x-0"
-                    }`}
+                  className={`absolute right-0 rounded-full w-[32px] h-[32px] transition-all duration-350 ease-in-out ${
+                    isSearchOpen
+                      ? "opacity-0 scale-90 translate-x-1 pointer-events-none"
+                      : "opacity-100 scale-100 translate-x-0"
+                  }`}
                   onClick={() => setIsSearchOpen(true)}
                 >
                   <MaterialIcon iconName="search" className="text-[#1C63DB]" />
@@ -909,10 +917,11 @@ export const ContentManagerMessages: React.FC = () => {
 
       {groupModalOpen.open && (
         <CreateGroupModal
-          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${groupModalOpen.open && groupModalOpen.mode === "edit"
-            ? (groupModalOpen.chat?.chat_id ?? "new")
-            : "new"
-            }`}
+          key={`${groupModalOpen.open ? groupModalOpen.mode : "create"}:${
+            groupModalOpen.open && groupModalOpen.mode === "edit"
+              ? (groupModalOpen.chat?.chat_id ?? "new")
+              : "new"
+          }`}
           open={groupModalOpen.open}
           mode={groupModalOpen.open ? groupModalOpen.mode : "create"}
           chat={
