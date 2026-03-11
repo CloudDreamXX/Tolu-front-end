@@ -72,7 +72,6 @@ export const ContentManagerSidebar: React.FC = () => {
       setIsNarrow(
         location.pathname.includes("document") ? false : w >= 1280 && w <= 1536
       );
-      setSidebarOpen(location.pathname.includes("document") ? true : w >= 1536);
     };
     checkWidth();
     window.addEventListener("resize", checkWidth);
@@ -143,26 +142,24 @@ export const ContentManagerSidebar: React.FC = () => {
 
   return (
     <>
-      {isNarrow && (
-        <Button
-          variant={"ghost"}
-          size={"icon"}
-          onClick={toggleSidebar}
+      <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={toggleSidebar}
+        className={cn(
+          "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
+          "transition-all duration-300",
+          sidebarOpen ? "left-[247px]" : "left-[68px]"
+        )}
+      >
+        <MaterialIcon
+          iconName="last_page"
           className={cn(
-            "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
-            "transition-all duration-300",
-            sidebarOpen ? "left-[247px]" : "left-[68px]"
+            "transition-transform duration-300",
+            sidebarOpen ? "rotate-180" : "rotate-0"
           )}
-        >
-          <MaterialIcon
-            iconName="last_page"
-            className={cn(
-              "transition-transform duration-300",
-              sidebarOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
-        </Button>
-      )}
+        />
+      </Button>
 
       <div
         className={cn(
@@ -199,9 +196,7 @@ export const ContentManagerSidebar: React.FC = () => {
                       item={link}
                       isNarrow={!sidebarOpen}
                       setOpenSidebar={setSidebarOpen}
-                      hideArrow={
-                        !link.content || link.title === "Content library"
-                      }
+                      hideArrow={!link.content || link.title === "Content library"}
                     />
                     {link.title === "Messages" && totalUnreadCount > 0 && (
                       <span className="absolute top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
@@ -217,7 +212,7 @@ export const ContentManagerSidebar: React.FC = () => {
         <Button
           variant={"unstyled"}
           size={"unstyled"}
-          onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
+          onClick={sidebarOpen ? () => { } : () => setMenuOpen(!menuOpen)}
           className={`flex gap-4 items-center justify-center gap-[18px] ${sidebarOpen ? "px-4" : ""}`}
         >
           {!sidebarOpen && (
