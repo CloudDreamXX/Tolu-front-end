@@ -141,6 +141,7 @@ export const icons = [
   "article",
   "push_pin",
   "keep_off",
+  "description",
 ] as const;
 
 export type IconName = (typeof icons)[number];

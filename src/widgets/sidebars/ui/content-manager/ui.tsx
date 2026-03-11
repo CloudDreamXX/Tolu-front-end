@@ -151,7 +151,7 @@ export const ContentManagerSidebar: React.FC = () => {
           className={cn(
             "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
             "transition-all duration-300",
-            sidebarOpen ? "left-[247px]" : "left-[88px]"
+            sidebarOpen ? "left-[247px]" : "left-[68px]"
           )}
         >
           <MaterialIcon
@@ -168,16 +168,11 @@ export const ContentManagerSidebar: React.FC = () => {
         className={cn(
           "transition-all duration-300",
           "flex flex-col h-full ",
-          sidebarOpen ? "min-w-[239px] max-w-[250px]" : "w-[81px]"
+          sidebarOpen ? "min-w-[239px] max-w-[250px]" : "w-[60px]"
         )}
       >
-        <ScrollArea className="h-[calc(100vh-64px)] bg-white ">
+        <ScrollArea className="h-[calc(100vh-64px)] bg-white">
           <div className={cn("flex flex-col gap-8 h-full")}>
-            <div className="flex flex-col items-center text-center">
-              <h2 className={"font-bold text-[24px] text-[#1C63DB]"}>
-                Tolu Health
-              </h2>
-            </div>
             <div
               className={cn(
                 "flex flex-col gap-[24px]",
@@ -186,7 +181,7 @@ export const ContentManagerSidebar: React.FC = () => {
             >
               <Button
                 variant="brightblue"
-                className="w-full"
+                className="w-full py-[11px] text-[16px] font-semibold"
                 onClick={handleCreateWithTolu}
               >
                 {!sidebarOpen && <MaterialIcon iconName={"stars_2"} fill={1} />}
@@ -195,17 +190,18 @@ export const ContentManagerSidebar: React.FC = () => {
               <div
                 className={cn(
                   "flex flex-col",
-                  sidebarOpen ? "items-start" : "items-center"
+                  sidebarOpen ? "items-start w-full" : "items-center"
                 )}
               >
                 {links.map((link) => (
-                  <div className="relative">
+                  <div key={link.title} className="relative w-full">
                     <CustomNavLink
-                      key={link.title}
                       item={link}
                       isNarrow={!sidebarOpen}
                       setOpenSidebar={setSidebarOpen}
-                      hideArrow
+                      hideArrow={
+                        !link.content || link.title === "Content library"
+                      }
                     />
                     {link.title === "Messages" && totalUnreadCount > 0 && (
                       <span className="absolute top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">

@@ -1585,7 +1585,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       (isSwitch(SWITCH_KEYS.CARD) && !folderState) ||
                       (!voiceFile && message === "")
                     }
-                    className={`h-[44px] w-[44px] p-0 rounded-full text-black disabled:opacity-[0.5] disabled:cursor-not-allowed`}
+                    className={`h-[44px] w-[44px] p-0 rounded-full text-[#1C63DB] disabled:text-[#5F5F65] disabled:opacity-1 disabled:cursor-not-allowed`}
                   >
                     <MaterialIcon iconName="send" fill={1} size={24} />
                   </Button>
