@@ -28,19 +28,29 @@ import {
   HistoryPopup,
   Message,
 } from "features/chat";
+import { ChatItem } from "features/chat-item";
 import { joinReplyChunksSafely } from "features/chat/ui/message-bubble/lib";
 import { caseBaseSchema } from "pages/content-manager";
 import {
   CaseSearchForm,
   FormValues,
 } from "pages/content-manager/create/case-search";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { toast, usePageWidth } from "shared/lib";
-import { Button, Card, CardContent, CardFooter, CardHeader } from "shared/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "shared/ui";
 import {
   PopoverAttach,
   PopoverClient,
@@ -53,13 +63,26 @@ import { extractVoiceText, generateCaseStory, subTitleSwitch } from "./helpers";
 import { SWITCH_CONFIG, SWITCH_KEYS, SwitchValue } from "./switch-config";
 import SwitchDropdown from "./components/switch-dropdown/ui";
 import { pickPreferredMaleEnglishVoice } from "pages/library-chat/lib";
-import { ChatItemModel, useSendChatNoteMutation } from "entities/chat";
+import {
+  ChatItemModel,
+  ChatMessageModel,
+  DetailsChatItemModel,
+  FetchChatMessagesResponse,
+  useSendChatNoteMutation,
+} from "entities/chat";
+import {
+  useFetchAllChatsQuery,
+  useLazyFetchChatMessagesQuery,
+  useSendMessageMutation,
+} from "entities/chat/api";
+import { chatsSelectors } from "entities/chat/chatsSlice";
 import {
   useCreateMedicationMutation,
   useCreateSupplementMutation,
 } from "entities/health-history/api";
 import { useUploadFilesLibraryMutation } from "entities/files-library/api";
 import { ConfirmModal } from "widgets/ConfirmModal";
+import { MessagesTab } from "widgets/message-tabs/ui/messages-tab";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -72,6 +95,8 @@ interface LibrarySmallChatProps {
   onDocumentRefresh?: (docId: string, chatId?: string) => void;
   initialDocument?: IDocument | null;
 }
+
+type LibraryTopTab = "agent" | "messages" | "community";
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   isCoach,
@@ -87,6 +112,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const isCreatePage = location.pathname === "/content-manager/create";
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const [sourceId, setSourceId] = useState<string | null>(null);
+  const [libraryTopTab, setLibraryTopTab] = useState<LibraryTopTab>("agent");
 
   const [isSearching, setIsSearching] = useState(false);
   const { loading, chat, lastChatId, activeChatKey } = useSelector(
@@ -166,8 +192,112 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     useUploadFilesLibraryMutation();
   const [createMedication] = useCreateMedicationMutation();
   const [createSupplement] = useCreateSupplementMutation();
+  const [sendMessageMutation] = useSendMessageMutation();
+  const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
+
+  const { isLoading: isLoadingCoachChats } = useFetchAllChatsQuery(undefined, {
+    skip: !token || !isCoach || libraryTopTab !== "messages",
+  });
+
+  const coachChats = useSelector(chatsSelectors.selectAll);
+  const [selectedSidebarChatId, setSelectedSidebarChatId] = useState<
+    string | null
+  >(null);
+
+  const selectedCoachChatForMessages = useMemo(() => {
+    const selectedChat = coachChats.find((item) => item.id === selectedSidebarChatId);
+    if (!selectedChat) return null;
+
+    const details: DetailsChatItemModel = {
+      chat_id: selectedChat.id,
+      name: selectedChat.name,
+      avatar_url: selectedChat.avatar_url,
+      chat_type: selectedChat.type,
+      last_message_at: selectedChat.lastMessageAt,
+      unread_count: selectedChat.unreadCount,
+      last_message: selectedChat.lastMessage,
+      description: null,
+      participants: (selectedChat.participants || []).map((participant) => ({
+        user: participant,
+        role: "member",
+        joinedAt: "",
+        lastReadAt: "",
+        isActive: true,
+        notificationsEnabled: true,
+        emailNotificationsEnabled: true,
+      })),
+      created_by: "",
+      created_at: "",
+      updated_at: "",
+    };
+
+    return details;
+  }, [coachChats, selectedSidebarChatId]);
 
   const chats = useSelector((state: RootState) => state.chats.entities);
+
+  useEffect(() => {
+    if (!isCoach || libraryTopTab !== "messages") {
+      return;
+    }
+
+    if (!selectedSidebarChatId && coachChats.length > 0) {
+      setSelectedSidebarChatId(coachChats[0].id);
+      return;
+    }
+
+    if (
+      selectedSidebarChatId &&
+      !coachChats.some((item) => item.id === selectedSidebarChatId)
+    ) {
+      setSelectedSidebarChatId(coachChats[0]?.id || null);
+    }
+  }, [coachChats, isCoach, libraryTopTab, selectedSidebarChatId]);
+
+  const sendCoachMessage = async (
+    content: string
+  ): Promise<ChatMessageModel | undefined> => {
+    if (!selectedSidebarChatId) return;
+
+    try {
+      const resp = await sendMessageMutation({
+        content,
+        message_type: "text",
+        reply_to_message_id: undefined,
+        chat_id: selectedSidebarChatId,
+      }).unwrap();
+
+      return resp.data as ChatMessageModel;
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: "Please try again.",
+      });
+      return undefined;
+    }
+  };
+
+  const loadCoachMessages = async (
+    page: number,
+    _pageSize?: number
+  ): Promise<FetchChatMessagesResponse | undefined> => {
+    if (!selectedSidebarChatId) return;
+
+    try {
+      const data = await fetchChatMessagesTrigger({
+        chatId: selectedSidebarChatId,
+        page,
+      }).unwrap();
+      return data.data;
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Failed to load messages",
+      });
+      return undefined;
+    }
+  };
 
   const findChatIdByParticipantId = (
     chats: Record<string, ChatItemModel>,
@@ -1274,6 +1404,43 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
   return (
     <>
+      {isCoach && (
+        <div className="flex items-center justify-between gap-[16px]">
+          <Tabs
+            value={libraryTopTab}
+            onValueChange={(tab) => setLibraryTopTab(tab as LibraryTopTab)}
+          >
+            <TabsList className="p-[24px] border-[ECEFF4] rounded-[16px] h-fit bg-white w-full justify-start items-center overflow-x-auto overflow-y-hidden border-none flex items-center justify-start gap-0">
+              <div className="relative min-w-[113px] w-fit flex items-center justify-center">
+                <TabsTrigger
+                  value="agent"
+                  className="w-full px-[16px] py-[6px] rounded-[8px] transition-colors duration-200 data-[state=active]:bg-gray-100 text-blue-600"
+                >
+                  Agent
+                </TabsTrigger>
+              </div>
+              <div className="relative min-w-[113px] w-fit flex items-center justify-center">
+                <TabsTrigger
+                  value="messages"
+                  className="w-full px-[16px] py-[6px] rounded-[8px] transition-colors duration-200 data-[state=active]:bg-gray-100 text-blue-600"
+                >
+                  Messages
+                </TabsTrigger>
+              </div>
+              <div className="relative min-w-[113px] w-fit flex items-center justify-center">
+                <TabsTrigger
+                  value="community"
+                  className="w-full px-[16px] py-[6px] rounded-[8px] transition-colors duration-200 data-[state=active]:bg-gray-100 text-blue-600"
+                >
+                  Community
+                </TabsTrigger>
+              </div>
+            </TabsList>
+          </Tabs>
+          <Button variant={"unstyled"}><MaterialIcon iconName="more_vert" className="rotate-[90deg] text-blue-600" /></Button>
+        </div>
+      )}
+
       <div className="xl:hidden mb-[16px]">
         <ChatBreadcrumb
           displayChatTitle={chatTitle}
@@ -1281,10 +1448,74 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           pathTitle={"Ask Tolu"}
         />
       </div>
-      {isSwitch(SWITCH_KEYS.CASE) ? (
+      {isCoach && libraryTopTab === "messages" ? (
+        <Card className="relative flex flex-col w-full h-full max-h-[calc(100vh-81px)] border-none rounded-none">
+          <CardContent className="flex flex-col h-full min-h-0 p-0 overflow-hidden">
+            <div className="border-b border-[#ECEFF4] bg-white">
+              <div className="max-h-[300px] overflow-y-auto px-2">
+                {isLoadingCoachChats ? (
+                  <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
+                    Loading chats...
+                  </div>
+                ) : coachChats.length === 0 ? (
+                  <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
+                    No chats yet.
+                  </div>
+                ) : (
+                  coachChats.map((item) => {
+                    const isActive = item.id === selectedSidebarChatId;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`border-t border-[#F3F4F6] rounded-[10px] ${isActive ? "bg-[#EAF2FF]" : "bg-white"}`}
+                      >
+                        <ChatItem
+                          item={item}
+                          onClick={() => setSelectedSidebarChatId(item.id)}
+                          classname={isActive ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
+                          detailed
+                        />
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-hidden">
+              {selectedCoachChatForMessages ? (
+                <MessagesTab
+                  key={selectedCoachChatForMessages.chat_id}
+                  chat={selectedCoachChatForMessages}
+                  sendMessage={sendCoachMessage}
+                  loadMessages={loadCoachMessages}
+                />
+              ) : (
+                <div className="h-full flex items-center justify-center text-[#5F5F65]">
+                  Select a chat to start messaging.
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ) : isCoach && libraryTopTab === "community" ? (
+        <Card className="relative flex flex-col w-full h-full border-none rounded-none">
+          <CardContent className="flex items-center justify-center h-full text-center">
+            <div>
+              <p className="text-[18px] font-semibold text-[#1D1D1F]">
+                Community
+              </p>
+              <p className="text-[14px] text-[#5F5F65] mt-2">
+                Community section will appear here.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : isSwitch(SWITCH_KEYS.CASE) ? (
         <Card className="relative flex flex-col w-full h-full overflow-auto border-none rounded-none">
           <CardHeader
-            className={`relative flex flex-col ${isCoach ? "items-baseline" : "items-center"} gap-4`}
+            className={`relative flex flex-col ${isCoach ? "pt-0 pb-4 h-fit items-baseline" : "items-center"} gap-4`}
           >
             <SwitchDropdown
               options={config.options}
@@ -1360,10 +1591,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           />
                           {(filesState.length > 0 ||
                             filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {filesState.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {filesState.length + filesFromLibrary.length}
+                              </span>
+                            )}
                         </Button>
                       }
                     />
@@ -1387,10 +1618,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                           <MaterialIcon iconName="settings" size={24} />
                           {(instruction?.length > 0 ||
                             existingInstruction?.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              1
-                            </span>
-                          )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                1
+                              </span>
+                            )}
                         </Button>
                       }
                       folderInstruction={existingInstruction}
@@ -1418,7 +1649,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
           className={`relative flex flex-col w-full h-full border-none rounded-none`}
         >
           <CardHeader
-            className={`relative flex items-center flex-row justify-between h-[100px] gap-2`}
+            className={`relative flex items-center flex-row justify-between gap-2 ${isCoach ? "pt-0 pb-4 h-fit" : "h-[100px]"}`}
           >
             <div className={`flex items-center gap-2`}>
               <SwitchDropdown
@@ -1609,10 +1840,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -1637,10 +1868,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="settings" size={24} />
                             {(instruction?.length > 0 ||
                               existingInstruction?.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                1
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  1
+                                </span>
+                              )}
                           </Button>
                         }
                         setInstruction={setInstruction}
@@ -1663,10 +1894,10 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                             <MaterialIcon iconName="attach_file" size={24} />
                             {(filesState.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {filesState.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {filesState.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />

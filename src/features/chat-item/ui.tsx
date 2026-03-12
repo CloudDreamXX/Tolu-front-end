@@ -34,14 +34,17 @@ interface ChatItemProps {
   item: ChatItemModel;
   onClick?: () => void;
   classname?: string;
+  detailed?: boolean;
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
   item,
   onClick,
   classname,
+  detailed = false,
 }) => {
   const { isMobileOrTablet } = usePageWidth();
+  const showDetailed = detailed || isMobileOrTablet;
   const [avatarSrc, setAvatarSrc] = useState("");
 
   useEffect(() => {
@@ -71,11 +74,11 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     if (item.type === "group") {
       return item.name
         ? item.name
-            .split(" ")
-            .filter(Boolean)
-            .map((p) => p[0]?.toUpperCase() ?? "")
-            .slice(0, 2)
-            .join("")
+          .split(" ")
+          .filter(Boolean)
+          .map((p) => p[0]?.toUpperCase() ?? "")
+          .slice(0, 2)
+          .join("")
         : "GR";
     }
 
@@ -119,7 +122,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       onClick={onClick}
     >
       <div className="flex justify-between ">
-        <div className="flex items-center ">
+        <div className="flex items-center gap-[12px]">
           <div className={isMobileOrTablet ? "relative mr-3" : "relative"}>
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={avatarSrc} />
@@ -129,9 +132,14 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
           </div>
-          {isMobileOrTablet && (
+          {showDetailed && (
             <div className="flex">
-              <span className="font-semibold text-[18px] text-[#1D1D1F]">
+              <span
+                className={cn(
+                  "font-semibold text-[#1D1D1F]",
+                  isMobileOrTablet ? "text-[18px]" : "text-[14px]"
+                )}
+              >
                 {item.name ||
                   (item.participants[0]?.first_name &&
                     item.participants[0]?.last_name &&
@@ -141,7 +149,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             </div>
           )}
         </div>
-        {isMobileOrTablet && (
+        {showDetailed && (
           <div className="flex flex-col h-fit">
             <p className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
               {timeAgo(toUserTZ(item.lastMessage?.created_at ?? "") ?? "")}
@@ -153,7 +161,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           </div>
         )}
       </div>
-      {isMobileOrTablet && (
+      {showDetailed && (
         <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
           {item.lastMessage?.content || "There are no messages ..."}
         </p>
