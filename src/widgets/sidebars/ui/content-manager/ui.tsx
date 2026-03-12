@@ -27,7 +27,6 @@ import { useFetchAllChatsQuery } from "entities/chat";
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
   const [links] = useState(sideBarContent);
-  const [isNarrow, setIsNarrow] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -65,19 +64,6 @@ export const ContentManagerSidebar: React.FC = () => {
       document.removeEventListener("keydown", handleEscape, true);
     };
   }, [menuOpen]);
-
-  useEffect(() => {
-    const checkWidth = () => {
-      const w = window.innerWidth;
-      setIsNarrow(
-        location.pathname.includes("document") ? false : w >= 1280 && w <= 1536
-      );
-      setSidebarOpen(location.pathname.includes("document") ? true : w >= 1536);
-    };
-    checkWidth();
-    window.addEventListener("resize", checkWidth);
-    return () => window.removeEventListener("resize", checkWidth);
-  }, [location.pathname]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -143,26 +129,24 @@ export const ContentManagerSidebar: React.FC = () => {
 
   return (
     <>
-      {isNarrow && (
-        <Button
-          variant={"ghost"}
-          size={"icon"}
-          onClick={toggleSidebar}
+      <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={toggleSidebar}
+        className={cn(
+          "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
+          "transition-all duration-300",
+          sidebarOpen ? "left-[247px]" : "left-[68px]"
+        )}
+      >
+        <MaterialIcon
+          iconName="last_page"
           className={cn(
-            "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
-            "transition-all duration-300",
-            sidebarOpen ? "left-[247px]" : "left-[68px]"
+            "transition-transform duration-300",
+            sidebarOpen ? "rotate-180" : "rotate-0"
           )}
-        >
-          <MaterialIcon
-            iconName="last_page"
-            className={cn(
-              "transition-transform duration-300",
-              sidebarOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
-        </Button>
-      )}
+        />
+      </Button>
 
       <div
         className={cn(
