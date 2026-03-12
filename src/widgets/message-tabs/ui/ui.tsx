@@ -37,7 +37,6 @@ import { SelectedClientModal } from "widgets/SelectedClientModal";
 import { ClientComprehensiveSummary } from "widgets/ClientComprehensiveSummary";
 import { ParticipantsModal } from "./components/ParticipantsModal";
 import { FilesTab } from "./files-tab";
-import { MessagesTab } from "./messages-tab";
 import { NotesTab } from "./notes-tab";
 import { OverviewTab } from "./overview-tab";
 import { RecommendedTab } from "./recommended-tab";
@@ -60,6 +59,7 @@ import {
   RESPIRATORY,
   SKIN,
 } from "widgets/health-profile-form/ui/medical-history-step/lib";
+import { MessagesTab } from "./messages-tab";
 
 type TabItem = {
   id: string;
@@ -71,7 +71,6 @@ type TabItem = {
 
 const ALL_TABS: TabItem[] = [
   { id: "overview", label: "Overview" },
-  { id: "messages", label: "Messages" },
   { id: "intake", label: "Intake" },
   { id: "journal", label: "Journal" },
   { id: "labs", label: "Labs" },
@@ -1010,8 +1009,8 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           onClose={() => {
             setSelectedClient(null);
           }}
-          onEdit={() => {}}
-          onDelete={() => {}}
+          onEdit={() => { }}
+          onDelete={() => { }}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />

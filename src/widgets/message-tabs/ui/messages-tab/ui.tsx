@@ -54,6 +54,7 @@ interface MessagesTabProps {
   ) => Promise<FetchChatMessagesResponse | undefined>;
   search?: string;
   refetch?: () => void;
+  fixedComposerBottom?: boolean;
 }
 
 type ListItem =
@@ -67,6 +68,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   sendMessage,
   loadMessages,
   refetch,
+  fixedComposerBottom = false,
 }) => {
   const token = useSelector((state: RootState) => state.user?.token);
   const { refetch: refetchChats } = useFetchAllChatsQuery(undefined, {
@@ -748,8 +750,14 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }
 
   return (
-    <>
-      <div style={currentStyle} className="relative w-full pr-3">
+    <div className={cn("w-full", fixedComposerBottom ? "h-full min-h-0 flex flex-col" : "")}>
+      <div
+        style={fixedComposerBottom ? undefined : currentStyle}
+        className={cn(
+          "relative w-full",
+          fixedComposerBottom ? "flex-1 min-h-0 pr-0" : "pr-3"
+        )}
+      >
         {listData.length === 0 ? (
           rendeerEmptyState()
         ) : (
@@ -777,14 +785,21 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             onClick={scrollToBottom}
-            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-4 hover:bg-blue-600"
+            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 bottom-2 hover:bg-blue-600"
           >
             <MaterialIcon iconName="keyboard_arrow_down" />
           </Button>
         )}
       </div>
 
-      <div className="pt-2">
+      <div
+        className={cn(
+          "pt-2",
+          fixedComposerBottom
+            ? "sticky bottom-0 z-20 bg-white"
+            : ""
+        )}
+      >
         <div className="relative">
           {!isClient && (
             <Button
@@ -856,10 +871,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                {files.length + filesFromLibrary.length}
-                              </span>
-                            )}
+                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                  {files.length + filesFromLibrary.length}
+                                </span>
+                              )}
                           </Button>
                         }
                       />
@@ -920,6 +935,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           onAddSupplement={handleAddSelectionToSupplements}
         />
       )}
-    </>
+    </div>
   );
 };

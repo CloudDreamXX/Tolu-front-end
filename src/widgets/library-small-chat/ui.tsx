@@ -40,13 +40,17 @@ import { useForm, useFormState, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
-import { toast, usePageWidth } from "shared/lib";
+import { cn, toast, usePageWidth } from "shared/lib";
 import {
   Button,
+  Calendar,
   Card,
   CardContent,
   CardFooter,
   CardHeader,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -83,6 +87,7 @@ import {
 import { useUploadFilesLibraryMutation } from "entities/files-library/api";
 import { ConfirmModal } from "widgets/ConfirmModal";
 import { MessagesTab } from "widgets/message-tabs/ui/messages-tab";
+import { CommunityTab } from "widgets/message-tabs/ui/community-tab/ui";
 
 interface LibrarySmallChatProps {
   isCoach?: boolean;
@@ -134,6 +139,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     (state: RootState) => state.client.selectedFilesFromLibrary || []
   );
   const token = useSelector((state: RootState) => state.user?.token);
+  const currentUserId = useSelector((state: RootState) => state.user?.user?.id);
 
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
   const [isSaveToLibraryModalOpen, setIsSaveToLibraryModalOpen] =
@@ -203,6 +209,93 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [selectedSidebarChatId, setSelectedSidebarChatId] = useState<
     string | null
   >(null);
+  const [selectedCoachFilterDate, setSelectedCoachFilterDate] =
+    useState<Date | null>(null);
+  const [isDateFilterOpen, setIsDateFilterOpen] = useState(false);
+  const [selectedCommunityFilterDate, setSelectedCommunityFilterDate] =
+    useState<Date | null>(null);
+  const [isCommunityDateFilterOpen, setIsCommunityDateFilterOpen] =
+    useState(false);
+  const [pinnedCoachChatIds, setPinnedCoachChatIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem("library-small-chat-pinned-coach-ids");
+      return stored ? (JSON.parse(stored) as string[]) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const orderedCoachChats = useMemo(() => {
+    if (!coachChats.length) return [];
+
+    const originalIndexes = new Map<string, number>();
+    coachChats.forEach((chat, index) => {
+      originalIndexes.set(chat.id, index);
+    });
+
+    return [...coachChats].sort((a, b) => {
+      const aPinned = pinnedCoachChatIds.includes(a.id);
+      const bPinned = pinnedCoachChatIds.includes(b.id);
+
+      if (aPinned !== bPinned) {
+        return aPinned ? -1 : 1;
+      }
+
+      const aRawDate = a.lastMessageAt || a.lastMessage?.created_at;
+      const bRawDate = b.lastMessageAt || b.lastMessage?.created_at;
+      const aTime = aRawDate ? new Date(aRawDate).getTime() : 0;
+      const bTime = bRawDate ? new Date(bRawDate).getTime() : 0;
+
+      if (aTime !== bTime) {
+        return bTime - aTime;
+      }
+
+      return (originalIndexes.get(a.id) ?? 0) - (originalIndexes.get(b.id) ?? 0);
+    });
+  }, [coachChats, pinnedCoachChatIds]);
+
+  const filteredCoachChats = useMemo(() => {
+    if (!selectedCoachFilterDate) {
+      return orderedCoachChats;
+    }
+
+    const selectedDate = new Date(
+      selectedCoachFilterDate.getFullYear(),
+      selectedCoachFilterDate.getMonth(),
+      selectedCoachFilterDate.getDate()
+    );
+
+    return orderedCoachChats.filter((chat) => {
+      const rawDate = chat.lastMessageAt || chat.lastMessage?.created_at;
+      if (!rawDate) return false;
+
+      const parsed = new Date(rawDate);
+      if (Number.isNaN(parsed.getTime())) return false;
+
+      const messageDate = new Date(
+        parsed.getFullYear(),
+        parsed.getMonth(),
+        parsed.getDate()
+      );
+
+      return messageDate.getTime() === selectedDate.getTime();
+    });
+  }, [orderedCoachChats, selectedCoachFilterDate]);
+
+  const togglePinCoachChat = (chatId: string) => {
+    setPinnedCoachChatIds((prev) =>
+      prev.includes(chatId)
+        ? prev.filter((id) => id !== chatId)
+        : [chatId, ...prev]
+    );
+  };
+
+  useEffect(() => {
+    localStorage.setItem(
+      "library-small-chat-pinned-coach-ids",
+      JSON.stringify(pinnedCoachChatIds)
+    );
+  }, [pinnedCoachChatIds]);
 
   const selectedCoachChatForMessages = useMemo(() => {
     const selectedChat = coachChats.find((item) => item.id === selectedSidebarChatId);
@@ -241,18 +334,24 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       return;
     }
 
-    if (!selectedSidebarChatId && coachChats.length > 0) {
-      setSelectedSidebarChatId(coachChats[0].id);
-      return;
-    }
-
     if (
       selectedSidebarChatId &&
-      !coachChats.some((item) => item.id === selectedSidebarChatId)
+      !filteredCoachChats.some((item) => item.id === selectedSidebarChatId)
     ) {
-      setSelectedSidebarChatId(coachChats[0]?.id || null);
+      setSelectedSidebarChatId(null);
     }
-  }, [coachChats, isCoach, libraryTopTab, selectedSidebarChatId]);
+  }, [
+    filteredCoachChats,
+    isCoach,
+    libraryTopTab,
+    selectedSidebarChatId,
+  ]);
+
+  useEffect(() => {
+    if (isCoach && libraryTopTab === "messages") {
+      setSelectedSidebarChatId(null);
+    }
+  }, [isCoach, libraryTopTab]);
 
   const sendCoachMessage = async (
     content: string
@@ -1403,7 +1502,12 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   };
 
   return (
-    <>
+    <div
+      className={cn(
+        "flex flex-col w-full overflow-x-hidden",
+        isMobileOrTablet ? "h-[calc(100vh-110px)]" : "h-screen"
+      )}
+    >
       {isCoach && (
         <div className="flex items-center justify-between gap-[16px]">
           <Tabs
@@ -1449,66 +1553,197 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         />
       </div>
       {isCoach && libraryTopTab === "messages" ? (
-        <Card className="relative flex flex-col w-full h-full max-h-[calc(100vh-81px)] border-none rounded-none">
-          <CardContent className="flex flex-col h-full min-h-0 p-0 overflow-hidden">
-            <div className="border-b border-[#ECEFF4] bg-white">
-              <div className="max-h-[300px] overflow-y-auto px-2">
-                {isLoadingCoachChats ? (
-                  <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
-                    Loading chats...
-                  </div>
-                ) : coachChats.length === 0 ? (
-                  <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
-                    No chats yet.
-                  </div>
-                ) : (
-                  coachChats.map((item) => {
-                    const isActive = item.id === selectedSidebarChatId;
-
-                    return (
-                      <div
-                        key={item.id}
-                        className={`border-t border-[#F3F4F6] rounded-[10px] ${isActive ? "bg-[#EAF2FF]" : "bg-white"}`}
+        <Card className="relative flex flex-col w-full h-full min-h-0 border-none rounded-none overflow-hidden">
+          <CardContent className="flex flex-col flex-1 min-h-0 p-0 overflow-hidden">
+            <div
+              className={cn(
+                "bg-white min-h-0",
+                selectedCoachChatForMessages ? "h-[300px] shrink-0" : "flex-1"
+              )}
+            >
+              <div className="h-full flex flex-col">
+                <div className="flex items-center justify-between px-[24px] py-[28px] border-t border-b border-[#ECEFF4] shrink-0">
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
+                  >
+                    <MaterialIcon
+                      iconName="keyboard_arrow_down"
+                      className="text-[#1C63DB]"
+                      size={24}
+                    />
+                    <span>Providers</span>
+                  </button>
+                  <Popover open={isDateFilterOpen} onOpenChange={setIsDateFilterOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
                       >
-                        <ChatItem
-                          item={item}
-                          onClick={() => setSelectedSidebarChatId(item.id)}
-                          classname={isActive ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
-                          detailed
+                        <MaterialIcon
+                          iconName="keyboard_arrow_down"
+                          className="text-[#1C63DB]"
+                          size={24}
                         />
+                        <span>
+                          {selectedCoachFilterDate
+                            ? selectedCoachFilterDate.toLocaleDateString()
+                            : "Date"}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-auto p-3">
+                      <div className="flex justify-end mb-2">
+                        <button
+                          type="button"
+                          className="text-[12px] text-[#1C63DB] font-medium"
+                          onClick={() => {
+                            setSelectedCoachFilterDate(null);
+                            setIsDateFilterOpen(false);
+                          }}
+                        >
+                          Clear
+                        </button>
                       </div>
-                    );
-                  })
-                )}
+                      <Calendar
+                        mode="single"
+                        selected={selectedCoachFilterDate ?? undefined}
+                        onSelect={(date) => {
+                          setSelectedCoachFilterDate(date ?? null);
+                          if (date) {
+                            setIsDateFilterOpen(false);
+                          }
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="flex-1 min-h-0 overflow-y-auto p-2">
+                  {isLoadingCoachChats ? (
+                    <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
+                      Loading chats...
+                    </div>
+                  ) : filteredCoachChats.length === 0 ? (
+                    <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
+                      No chats yet.
+                    </div>
+                  ) : (
+                    filteredCoachChats.map((item) => {
+                      const isActive = item.id === selectedSidebarChatId;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className={cn(
+                            "rounded-[10px]",
+                            "border-b border-[#F3F4F6]"
+                          )}
+                        >
+                          <ChatItem
+                            item={item}
+                            onClick={() =>
+                              setSelectedSidebarChatId((prev) =>
+                                prev === item.id ? null : item.id
+                              )
+                            }
+                            pinned={pinnedCoachChatIds.includes(item.id)}
+                            onTogglePin={() => togglePinCoachChat(item.id)}
+                            showOwnMessagePrefix
+                            currentUserId={currentUserId}
+                            classname={isActive ? "bg-[#1C63DB] opacity-[70%] text-white" : ""}
+                            detailed
+                          />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-hidden">
-              {selectedCoachChatForMessages ? (
-                <MessagesTab
-                  key={selectedCoachChatForMessages.chat_id}
-                  chat={selectedCoachChatForMessages}
-                  sendMessage={sendCoachMessage}
-                  loadMessages={loadCoachMessages}
-                />
-              ) : (
-                <div className="h-full flex items-center justify-center text-[#5F5F65]">
-                  Select a chat to start messaging.
+            {selectedCoachChatForMessages ? (
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+                <div className="w-full h-full overflow-x-hidden p-[24px]">
+                  <MessagesTab
+                    key={selectedCoachChatForMessages.chat_id}
+                    chat={selectedCoachChatForMessages}
+                    sendMessage={sendCoachMessage}
+                    loadMessages={loadCoachMessages}
+                    fixedComposerBottom
+                  />
                 </div>
-              )}
-            </div>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       ) : isCoach && libraryTopTab === "community" ? (
         <Card className="relative flex flex-col w-full h-full border-none rounded-none">
-          <CardContent className="flex items-center justify-center h-full text-center">
-            <div>
-              <p className="text-[18px] font-semibold text-[#1D1D1F]">
-                Community
-              </p>
-              <p className="text-[14px] text-[#5F5F65] mt-2">
-                Community section will appear here.
-              </p>
+          <CardContent className="flex flex-col h-full p-0">
+            <div className="flex items-center justify-between px-[24px] py-[28px] border-t border-b border-[#ECEFF4] shrink-0">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
+              >
+                <MaterialIcon
+                  iconName="keyboard_arrow_down"
+                  className="text-[#1C63DB]"
+                  size={24}
+                />
+                <span>Weight loss group</span>
+              </button>
+              <Popover
+                open={isCommunityDateFilterOpen}
+                onOpenChange={setIsCommunityDateFilterOpen}
+              >
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
+                  >
+                    <MaterialIcon
+                      iconName="keyboard_arrow_down"
+                      className="text-[#1C63DB]"
+                      size={24}
+                    />
+                    <span>
+                      {selectedCommunityFilterDate
+                        ? selectedCommunityFilterDate.toLocaleDateString()
+                        : "Date"}
+                    </span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-auto p-3">
+                  <div className="flex justify-end mb-2">
+                    <button
+                      type="button"
+                      className="text-[12px] text-[#1C63DB] font-medium"
+                      onClick={() => {
+                        setSelectedCommunityFilterDate(null);
+                        setIsCommunityDateFilterOpen(false);
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <Calendar
+                    mode="single"
+                    selected={selectedCommunityFilterDate ?? undefined}
+                    onSelect={(date) => {
+                      setSelectedCommunityFilterDate(date ?? null);
+                      if (date) {
+                        setIsCommunityDateFilterOpen(false);
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto px-[24px] pb-[24px]">
+              <CommunityTab />
             </div>
           </CardContent>
         </Card>
@@ -1935,6 +2170,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
         confirmText={isSavingToLibrary ? "Saving..." : "Save"}
         cancelText="No"
       />
-    </>
+    </div>
   );
 };
