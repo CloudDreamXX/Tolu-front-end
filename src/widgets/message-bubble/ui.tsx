@@ -50,6 +50,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }, [message.reactions]);
 
   const user = useSelector((state: RootState) => state.user.user);
+  const isClientView = user?.roleName === "Client";
 
   const [addReaction] = useAddMessageReactionMutation();
   const [deleteReaction] = useDeleteMessageReactionMutation();
@@ -121,8 +122,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const renderFileMessage = () => (
     <div
       className={cn(
-        "rounded-lg  p-2 text-base text-[#1D1D1F] flex flex-wrap gap-2 w-fit",
-        "bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4]",
+        "text-base text-[#1D1D1F] flex flex-wrap gap-2 max-w-full",
         isOwn ? "rounded-tr-none" : "rounded-tl-none",
         className
       )}
@@ -133,7 +133,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         fileSize={message.file_size}
         fileUrl={message.file_url}
         fileType={message.file_type}
-        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC]")}
+        className={cn(
+          isOwn ? "bg-blue-500/10" : "bg-white",
+          "max-w-full w-full"
+        )}
       />
     </div>
   );
@@ -186,10 +189,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     return (
       <div
         className={cn(
-          "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F]",
+          "inline-block rounded-lg text-base text-[#1D1D1F]",
           "max-w-full overflow-hidden break-words whitespace-pre-wrap",
-          "bg-[rgba(255,255,255,0.4)] border border-[#ECEFF4]",
-          isOwn ? "rounded-tr-none" : "rounded-tl-none",
+          isOwn
+            ? "rounded-tr-none bg-blue-500/10 py-[10px] px-[14px]"
+            : "rounded-tl-none bg-white",
+          isClientView ? "py-[10px] px-[14px]" : "",
           className
         )}
       >
@@ -374,7 +379,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div className={cn("flex flex-col w-full", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
-        {!isMobile && !isOwn && (
+        {!isMobile && !isOwn && isClientView && (
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
               <AvatarImage src={avatarSrc} />
@@ -406,7 +411,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
           <div
             ref={bubbleRef}
-            className="relative w-fit"
+            className="relative w-fit max-w-full"
             onClick={isEditing ? undefined : openEmojiPicker}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

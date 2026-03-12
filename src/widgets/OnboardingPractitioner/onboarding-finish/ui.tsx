@@ -16,7 +16,7 @@ export const OnboardingFinish = () => {
   const handleLastClick = async () => {
     try {
       await onboardUser({ data: coachOnboarding }).unwrap();
-      nav("/content-manager/library");
+      nav("/clients");
       toast({ title: "Onboarding successful" });
     } catch (error) {
       console.error("Error during onboarding:", error);
