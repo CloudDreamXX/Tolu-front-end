@@ -68,9 +68,9 @@ const HistoryPopupComponent: React.FC<Props> = ({ className, smallChat }) => {
   const Panel = (
     <div
       className={cn(
-        "absolute z-[999999] flex flex-col bottom-0 top-[300px] left-0 w-full md:max-w-[350px] md:max-h-full md:h-full",
+        "absolute z-[999999] flex flex-col bottom-0 top-[300px] right-0 w-full md:max-w-[350px] md:max-h-full md:h-full",
         smallChat
-          ? "lg:left-auto md:top-[68px] right-[162px] lg:h-[400px]"
+          ? "lg:left-auto md:top-[68px] right-[24px] lg:h-[400px]"
           : "md:left-auto md:right-[160px] lg:right-[4rem] lg:left-auto md:top-[130px]",
         "overflow-y-auto p-4 bg-white border rounded-t-[18px] md:rounded-xl shadow-lg"
       )}

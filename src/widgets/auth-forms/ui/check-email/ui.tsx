@@ -43,11 +43,7 @@ export const CheckEmail: React.FC<CheckEmailProps> = ({ from }) => {
                 accessToken: msg.data.accessToken,
               })
             );
-            nav(
-              msg.data.user.roleID === 3
-                ? "/welcome/client"
-                : "/clients"
-            );
+            nav(msg.data.user.roleID === 3 ? "/welcome/client" : "/clients");
           }
         }
 

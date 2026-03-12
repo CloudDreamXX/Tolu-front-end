@@ -83,11 +83,11 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     if (item.type === "group") {
       return item.name
         ? item.name
-          .split(" ")
-          .filter(Boolean)
-          .map((p) => p[0]?.toUpperCase() ?? "")
-          .slice(0, 2)
-          .join("")
+            .split(" ")
+            .filter(Boolean)
+            .map((p) => p[0]?.toUpperCase() ?? "")
+            .slice(0, 2)
+            .join("")
         : "GR";
     }
 
@@ -121,7 +121,8 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     return "UN";
   })();
 
-  const lastMessageContent = item.lastMessage?.content || "There are no messages ...";
+  const lastMessageContent =
+    item.lastMessage?.content || "There are no messages ...";
   const lastMessageSenderId =
     item.lastMessage?.sender?.id || item.lastMessage?.sender?.user_id;
   const shouldPrefixOwnMessage =
@@ -205,7 +206,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       </div>
       {showDetailed && (
         <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
-          {shouldPrefixOwnMessage ? `You: ${lastMessageContent}` : lastMessageContent}
+          {shouldPrefixOwnMessage
+            ? `You: ${lastMessageContent}`
+            : lastMessageContent}
         </p>
       )}
     </Button>

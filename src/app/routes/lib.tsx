@@ -83,14 +83,8 @@ export const AppRoutes = () => {
           </MainLayout>
         }
       >
-        <Route
-          path="/dashboard"
-          element={<ContentManagerDashboard />}
-        />
-        <Route
-          path="/settings"
-          element={<ContentManagerSettings />}
-        />
+        <Route path="/dashboard" element={<ContentManagerDashboard />} />
+        <Route path="/settings" element={<ContentManagerSettings />} />
         <Route
           path="/content-manager/profile"
           element={<ContentManagerProfile />}

@@ -750,7 +750,12 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }
 
   return (
-    <div className={cn("w-full", fixedComposerBottom ? "h-full min-h-0 flex flex-col" : "")}>
+    <div
+      className={cn(
+        "w-full",
+        fixedComposerBottom ? "h-full min-h-0 flex flex-col" : ""
+      )}
+    >
       <div
         style={fixedComposerBottom ? undefined : currentStyle}
         className={cn(
@@ -795,9 +800,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       <div
         className={cn(
           "pt-2",
-          fixedComposerBottom
-            ? "sticky bottom-0 z-20 bg-white"
-            : ""
+          fixedComposerBottom ? "sticky bottom-0 z-20 bg-white" : ""
         )}
       >
         <div className="relative">
@@ -871,10 +874,10 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                             />
                             {(files.length > 0 ||
                               filesFromLibrary.length > 0) && (
-                                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                                  {files.length + filesFromLibrary.length}
-                                </span>
-                              )}
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
                           </Button>
                         }
                       />
