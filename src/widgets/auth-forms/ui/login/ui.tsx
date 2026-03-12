@@ -130,7 +130,7 @@ export const LoginForm = () => {
       if (isMobileOrTablet) {
         navigate(`/content-manager/library/new_chat_${Date.now()}`);
       } else {
-        navigate("/content-manager/create");
+        navigate("/clients");
       }
       return;
     }
@@ -143,7 +143,7 @@ export const LoginForm = () => {
       // const issue = findFirstIncompleteStep(coachData);
       // if (issue) navigate(issue.route);
       // else
-      navigate("/content-manager/create");
+      navigate("/clients");
     } catch (err: any) {
       const detail = err?.data?.detail;
       console.error(err);
@@ -153,7 +153,7 @@ export const LoginForm = () => {
         detail.includes("No onboarding profile found")
       ) {
         navigate(
-          "/content-manager/create"
+          "/clients"
           //   {
           //   state: { incompleteRoute: "/select-type" },
           // }
@@ -388,11 +388,10 @@ export const LoginForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={formDataChangeHandler}
-                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${
-                    loginError
+                  className={`px-[16px] py-[11px] h-[44px] rounded-[8px] w-full ${loginError
                       ? "border border-[#FF1F0F]"
                       : "border border-[#DFDFDF]"
-                  }`}
+                    }`}
                 />
                 {loginError && (
                   <p className="text-[#FF1F0F] text-[14px]">{loginError}</p>
@@ -411,11 +410,10 @@ export const LoginForm = () => {
                     placeholder="Enter Password"
                     name="password"
                     onChange={formDataChangeHandler}
-                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${
-                      passwordError
+                    className={`w-full px-[16px] py-[11px] h-[44px] rounded-[8px] ${passwordError
                         ? "border border-[#FF1F0F]"
                         : "border border-[#DFDFDF]"
-                    }`}
+                      }`}
                   />
                   {formData.password && (
                     <Button
@@ -491,11 +489,10 @@ export const LoginForm = () => {
               <Button
                 variant={"unstyled"}
                 size={"unstyled"}
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  formData.email && !loginError
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${formData.email && !loginError
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
                 onClick={handleRequestInvite}
               >
                 Request invite
@@ -519,23 +516,22 @@ export const LoginForm = () => {
                       !formData.password ||
                       isPasswordLoginLoading))
                 }
-                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${
-                  (loginMode === "2fa" &&
+                className={`w-full md:w-[250px] h-[44px] p-[16px] rounded-full flex items-center justify-center text-[16px] font-semibold ${(loginMode === "2fa" &&
                     !isCodeSent &&
                     formData.email &&
                     !isRequestingCode) ||
-                  (loginMode === "2fa" &&
-                    isCodeSent &&
-                    formData.code &&
-                    formData.code.length >= 6 &&
-                    !isVerifyingCode) ||
-                  (loginMode === "password" &&
-                    formData.email &&
-                    formData.password &&
-                    !isPasswordLoginLoading)
+                    (loginMode === "2fa" &&
+                      isCodeSent &&
+                      formData.code &&
+                      formData.code.length >= 6 &&
+                      !isVerifyingCode) ||
+                    (loginMode === "password" &&
+                      formData.email &&
+                      formData.password &&
+                      !isPasswordLoginLoading)
                     ? "bg-[#1C63DB] text-white"
                     : "bg-[#D5DAE2] text-[#5F5F65]"
-                }`}
+                  }`}
               >
                 {loginMode === "2fa"
                   ? isCodeSent

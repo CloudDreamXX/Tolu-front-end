@@ -155,11 +155,10 @@ export const InviteClients = () => {
                 Import CSV or PDF
               </p>
               <div
-                className={`w-full border ${
-                  dragOver
+                className={`w-full border ${dragOver
                     ? "border-[#0057C2]"
                     : "border-dashed border-[#1C63DB]"
-                } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
+                  } rounded-[12px] h-[180px] flex flex-col items-center justify-center text-center cursor-pointer`}
                 onClick={handleUploadClick}
                 onDragOver={(e) => {
                   e.preventDefault();

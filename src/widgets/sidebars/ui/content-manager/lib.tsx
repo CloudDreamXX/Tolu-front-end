@@ -5,7 +5,7 @@ import { SideBarItem } from "../model";
 export const sideBarContent: SideBarItem[] = [
   {
     title: "Dashboard",
-    link: "/",
+    link: "/dashboard",
     icon: <MaterialIcon iconName="schedule" />,
   },
   {

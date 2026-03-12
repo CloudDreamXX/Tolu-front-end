@@ -42,6 +42,8 @@ import { usePageWidth } from "shared/lib";
 import { CheckInvite } from "widgets/auth-forms/ui/check-invite";
 import { AdminProfile } from "pages/admin-profile";
 import { AdminRequests } from "pages/admin-requests";
+import { ContentManagerDashboard } from "pages/content-manager/dashboard";
+import { ContentManagerSettings } from "pages/content-manager/settings";
 
 export const AppRoutes = () => {
   const { isMobileOrTablet } = usePageWidth();
@@ -81,6 +83,14 @@ export const AppRoutes = () => {
           </MainLayout>
         }
       >
+        <Route
+          path="/dashboard"
+          element={<ContentManagerDashboard />}
+        />
+        <Route
+          path="/settings"
+          element={<ContentManagerSettings />}
+        />
         <Route
           path="/content-manager/profile"
           element={<ContentManagerProfile />}
@@ -138,7 +148,7 @@ export const AppRoutes = () => {
               to={
                 isMobileOrTablet
                   ? `/content-manager/library/new_chat_${Date.now()}`
-                  : "/content-manager/create"
+                  : "/clients"
               }
             />
           }

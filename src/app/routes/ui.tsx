@@ -27,7 +27,7 @@ const getRouteByRole = (role: string): string => {
     case "Practitioner":
     case "Coach":
     case "Reviewer":
-      return "/content-manager/library";
+      return "/clients";
     case "Super Admin":
     case "admin":
     case "Admin":
