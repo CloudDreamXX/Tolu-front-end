@@ -224,13 +224,29 @@ export const FileItem: React.FC<FileItemProps> = ({
             })()
           ) : (
             <div className="flex gap-[4px]">
-              <Button variant="ghost" className="p-1" onClick={openPreview}>
+              <Button
+                variant="ghost"
+                className="p-1"
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void openPreview();
+                }}
+              >
                 <MaterialIcon iconName="visibility" />
               </Button>
               <Button
                 variant={"ghost"}
-                onClick={onDownloadClick}
                 className="p-1"
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void onDownloadClick();
+                }}
               >
                 <MaterialIcon iconName="download" />
               </Button>
@@ -356,10 +372,30 @@ export const FileItem: React.FC<FileItemProps> = ({
           })()
         ) : (
           <div className="flex gap-[4px]">
-            <Button variant="ghost" className="p-1" onClick={openPreview}>
+            <Button
+              variant="ghost"
+              className="p-1"
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                void openPreview();
+              }}
+            >
               <MaterialIcon iconName="visibility" />
             </Button>
-            <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
+            <Button
+              variant={"ghost"}
+              className="p-1"
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                void onDownloadClick();
+              }}
+            >
               <MaterialIcon iconName="download" />
             </Button>
           </div>

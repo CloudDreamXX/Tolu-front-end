@@ -346,7 +346,11 @@ export const SupplementsTab: React.FC<SupplementsTabProps> = ({
                 )}
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-4">
-                    <Input {...getInputProps()} className="hidden" />
+                    <Input
+                      {...getInputProps()}
+                      className="hidden"
+                      clearable={false}
+                    />
                     <Button value={"ghost"} className="p-0" onClick={open}>
                       <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                     </Button>
