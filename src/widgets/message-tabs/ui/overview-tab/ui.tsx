@@ -368,7 +368,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
               valueClassName="text-[12px] leading-[18px] text-[#1D1D1F]"
             />
             <Button
-              variant="unstyled"
+              variant="brightblue"
+              disabled
               className="w-[24px] h-[24px] flex items-center justify-center bg-[#1C63DB] text-white p-[3px] rounded-full"
             >
               <MaterialIcon iconName="add" size={18} />

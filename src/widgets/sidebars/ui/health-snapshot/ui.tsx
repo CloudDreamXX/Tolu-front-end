@@ -178,7 +178,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
         className={cn(
           "transition-all duration-300 pr-1",
           "flex flex-col h-full ",
-          sidebarOpen ? "w-[300px]" : "w-[81px]"
+          sidebarOpen ? "" : "w-[81px]"
         )}
       >
         <div
@@ -198,7 +198,7 @@ export const HealthSnapshotSidebar: React.FC = () => {
               </h2>
             </NavLink>
 
-            <div className="flex flex-col px-[14px] gap-[18px] w-full">
+            <div className="flex flex-col gap-[18px] w-full">
               <SearchAiSmallInput sidebarOpen={sidebarOpen} />
             </div>
 

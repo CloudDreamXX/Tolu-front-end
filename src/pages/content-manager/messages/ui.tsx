@@ -732,9 +732,10 @@ export const ContentManagerMessages: React.FC = () => {
                     icon={
                       <MaterialIcon
                         iconName="search"
-                        className="text-[5F5F65]"
+                        className="text-[#5F5F65]"
                       />
                     }
+                    onIconClick={() => setSearchChats("")}
                     placeholder="Search"
                     value={searchChats}
                     onChange={(e) => setSearchChats(e.target.value)}
@@ -744,6 +745,7 @@ export const ContentManagerMessages: React.FC = () => {
                       }
                     }}
                     className="w-[316px] rounded-[1000px] border border-[#D6D7D9] px-[12px] py-[10px] pl-[40px] text-[14px]"
+                    clearable={true}
                   />
                 </div>
 
