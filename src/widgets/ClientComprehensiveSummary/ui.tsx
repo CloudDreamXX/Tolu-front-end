@@ -68,6 +68,7 @@ import {
   prune,
 } from "widgets/health-profile-form/ui/lib";
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
+import { toast } from "shared/lib";
 
 const steps = [
   // "Basic Info",
@@ -169,7 +170,11 @@ export const ClientComprehensiveSummary = ({
   }
 
   if (isError) {
-    return <div>Unable to load health history</div>;
+    toast({
+      title: "No health history found for that client",
+      variant: "destructive",
+    });
+    return null;
   }
 
   const content =
