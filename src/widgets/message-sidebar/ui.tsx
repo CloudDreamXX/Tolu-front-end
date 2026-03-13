@@ -298,12 +298,7 @@ export const MessageSidebar: React.FC<MessageSidebarProps> = ({
             iconDistance={60}
           >
             {chats.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center text-[#5F5F65]">
-                <p className="font-semibold">No conversations</p>
-                <p className="text-sm">
-                  Start a conversation with a client to see it here.
-                </p>
-              </div>
+              <div></div>
             ) : (
               chats.map((item) => (
                 <DockIcon
