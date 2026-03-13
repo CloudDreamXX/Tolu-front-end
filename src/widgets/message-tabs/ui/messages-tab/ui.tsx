@@ -571,7 +571,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       return (
         <MaterialIcon
           iconName="progress_activity"
-          className="text-blue-600 animate-spin"
+          className="text-white animate-spin"
         />
       );
     }
@@ -916,7 +916,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                   </div>
                   <Button
                     onClick={sendAll}
-                    disabled={sending}
+                    disabled={sending || input === ""}
                     variant={"brightblue"}
                     className="rounded-full flex justify-center items-center
              w-[42px] h-[42px] lg:w-[96px] lg:h-[33px]"

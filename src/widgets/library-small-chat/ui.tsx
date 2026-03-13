@@ -102,6 +102,7 @@ interface LibrarySmallChatProps {
 }
 
 type LibraryTopTab = "agent" | "messages" | "community";
+type MessagesAudience = "providers" | "clients";
 
 export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   isCoach,
@@ -118,6 +119,9 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const [sourceId, setSourceId] = useState<string | null>(null);
   const [libraryTopTab, setLibraryTopTab] = useState<LibraryTopTab>("agent");
+  const [messagesAudience, setMessagesAudience] =
+    useState<MessagesAudience>("providers");
+  const [isMessagesAudienceOpen, setIsMessagesAudienceOpen] = useState(false);
 
   const [isSearching, setIsSearching] = useState(false);
   const { loading, chat, lastChatId, activeChatKey } = useSelector(
@@ -202,8 +206,120 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   const [fetchChatMessagesTrigger] = useLazyFetchChatMessagesQuery();
 
   const { isLoading: isLoadingCoachChats } = useFetchAllChatsQuery(undefined, {
-    skip: !token || !isCoach || libraryTopTab !== "messages",
+    skip:
+      !token ||
+      !isCoach ||
+      libraryTopTab !== "messages" ||
+      messagesAudience !== "clients",
   });
+
+  const mockProviderChats = useMemo<ChatItemModel[]>(() => {
+    const now = Date.now();
+
+    const createMessage = (
+      id: string,
+      chatId: string,
+      content: string,
+      senderName: string,
+      minutesAgo: number
+    ): ChatMessageModel => {
+      const createdAt = new Date(now - minutesAgo * 60_000).toISOString();
+
+      return {
+        id,
+        chat_id: chatId,
+        content,
+        message_type: "text",
+        created_at: createdAt,
+        updated_at: createdAt,
+        file_url: null,
+        file_name: null,
+        file_size: null,
+        file_type: null,
+        sender: {
+          id: `provider-${id}`,
+          email: `${senderName.toLowerCase().replace(/\s+/g, ".")}@demo.com`,
+          name: senderName,
+          first_name: senderName.split(" ")[0] || senderName,
+          last_name: senderName.split(" ").slice(1).join(" ") || "",
+        },
+      };
+    };
+
+    const providers: Array<{
+      id: string;
+      name: string;
+      preview: string;
+      sender: string;
+      minutesAgo: number;
+      unreadCount: number;
+    }> = [
+      {
+        id: "provider-chat-1",
+        name: "Sam Kaar",
+        preview: "Let's review the care plan updates this afternoon.",
+        sender: "Sam Kaar",
+        minutesAgo: 8,
+        unreadCount: 0,
+      },
+      {
+        id: "provider-chat-2",
+        name: "Coach Tirany",
+        preview: "I uploaded the latest blood pressure trend notes.",
+        sender: "Coach Tirany",
+        minutesAgo: 23,
+        unreadCount: 0,
+      },
+      {
+        id: "provider-chat-3",
+        name: "Dr Tina Bassam",
+        preview: "Client progress looks great this week.",
+        sender: "Dr Tina Bassam",
+        minutesAgo: 55,
+        unreadCount: 0,
+      },
+    ];
+
+    return providers.map((provider, index) => {
+      const lastMessage = createMessage(
+        `provider-message-${index + 1}`,
+        provider.id,
+        provider.preview,
+        provider.sender,
+        provider.minutesAgo
+      );
+
+      return {
+        id: provider.id,
+        name: provider.name,
+        avatar_url: "",
+        type: "direct",
+        lastMessageAt: lastMessage.created_at,
+        unreadCount: provider.unreadCount,
+        lastMessage,
+        participants: [
+          {
+            id: `provider-participant-${index + 1}`,
+            email: `${provider.sender.toLowerCase().replace(/\s+/g, ".")}@demo.com`,
+            name: provider.name,
+            first_name: provider.name.split(" ")[0] || provider.name,
+            last_name: provider.name.split(" ").slice(1).join(" ") || "",
+          },
+        ],
+      };
+    });
+  }, []);
+
+  const [providerChatMessagesById, setProviderChatMessagesById] = useState<
+    Record<string, ChatMessageModel[]>
+  >(() =>
+    Object.fromEntries(
+      mockProviderChats.map((chat) => [
+        chat.id,
+        chat.lastMessage ? [chat.lastMessage] : [],
+      ])
+    )
+  );
 
   const coachChats = useSelector(chatsSelectors.selectAll);
   const [selectedSidebarChatId, setSelectedSidebarChatId] = useState<
@@ -286,6 +402,40 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     });
   }, [orderedCoachChats, selectedCoachFilterDate]);
 
+  const chatsForSelectedAudience = useMemo(
+    () =>
+      messagesAudience === "clients" ? filteredCoachChats : mockProviderChats,
+    [filteredCoachChats, messagesAudience, mockProviderChats]
+  );
+
+  const filteredSidebarChats = useMemo(() => {
+    if (!selectedCoachFilterDate) {
+      return chatsForSelectedAudience;
+    }
+
+    const selectedDate = new Date(
+      selectedCoachFilterDate.getFullYear(),
+      selectedCoachFilterDate.getMonth(),
+      selectedCoachFilterDate.getDate()
+    );
+
+    return chatsForSelectedAudience.filter((chat) => {
+      const rawDate = chat.lastMessageAt || chat.lastMessage?.created_at;
+      if (!rawDate) return false;
+
+      const parsed = new Date(rawDate);
+      if (Number.isNaN(parsed.getTime())) return false;
+
+      const messageDate = new Date(
+        parsed.getFullYear(),
+        parsed.getMonth(),
+        parsed.getDate()
+      );
+
+      return messageDate.getTime() === selectedDate.getTime();
+    });
+  }, [chatsForSelectedAudience, selectedCoachFilterDate]);
+
   const togglePinCoachChat = (chatId: string) => {
     setPinnedCoachChatIds((prev) =>
       prev.includes(chatId)
@@ -301,8 +451,8 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     );
   }, [pinnedCoachChatIds]);
 
-  const selectedCoachChatForMessages = useMemo(() => {
-    const selectedChat = coachChats.find(
+  const selectedChatForMessages = useMemo(() => {
+    const selectedChat = chatsForSelectedAudience.find(
       (item) => item.id === selectedSidebarChatId
     );
     if (!selectedChat) return null;
@@ -331,7 +481,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     };
 
     return details;
-  }, [coachChats, selectedSidebarChatId]);
+  }, [chatsForSelectedAudience, selectedSidebarChatId]);
 
   const chats = useSelector((state: RootState) => state.chats.entities);
 
@@ -342,17 +492,17 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     if (
       selectedSidebarChatId &&
-      !filteredCoachChats.some((item) => item.id === selectedSidebarChatId)
+      !filteredSidebarChats.some((item) => item.id === selectedSidebarChatId)
     ) {
       setSelectedSidebarChatId(null);
     }
-  }, [filteredCoachChats, isCoach, libraryTopTab, selectedSidebarChatId]);
+  }, [filteredSidebarChats, isCoach, libraryTopTab, selectedSidebarChatId]);
 
   useEffect(() => {
     if (isCoach && libraryTopTab === "messages") {
       setSelectedSidebarChatId(null);
     }
-  }, [isCoach, libraryTopTab]);
+  }, [isCoach, libraryTopTab, messagesAudience]);
 
   const sendCoachMessage = async (
     content: string
@@ -397,6 +547,75 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       });
       return undefined;
     }
+  };
+
+  const sendProviderMessage = async (
+    content: string
+  ): Promise<ChatMessageModel | undefined> => {
+    if (!selectedSidebarChatId || !content.trim()) return;
+
+    const createdAt = new Date().toISOString();
+    const nextMessage: ChatMessageModel = {
+      id: `provider-local-${Date.now()}`,
+      chat_id: selectedSidebarChatId,
+      content: content.trim(),
+      message_type: "text",
+      created_at: createdAt,
+      updated_at: createdAt,
+      file_url: null,
+      file_name: null,
+      file_size: null,
+      file_type: null,
+      sender: {
+        id: String(currentUserId ?? "coach-user"),
+        email: "coach@demo.com",
+        name: "You",
+        first_name: "You",
+        last_name: "",
+      },
+    };
+
+    setProviderChatMessagesById((prev) => ({
+      ...prev,
+      [selectedSidebarChatId]: [
+        ...(prev[selectedSidebarChatId] || []),
+        nextMessage,
+      ],
+    }));
+
+    return nextMessage;
+  };
+
+  const loadProviderMessages = async (
+    page: number
+  ): Promise<FetchChatMessagesResponse | undefined> => {
+    if (!selectedSidebarChatId) return;
+
+    const messages = providerChatMessagesById[selectedSidebarChatId] || [];
+    return {
+      messages,
+      total: messages.length,
+      page,
+      limit: messages.length || 20,
+      has_next: false,
+      has_prev: false,
+    };
+  };
+
+  const sendMessageForSelectedAudience = (
+    content: string
+  ): Promise<ChatMessageModel | undefined> => {
+    return messagesAudience === "clients"
+      ? sendCoachMessage(content)
+      : sendProviderMessage(content);
+  };
+
+  const loadMessagesForSelectedAudience = (
+    page: number
+  ): Promise<FetchChatMessagesResponse | undefined> => {
+    return messagesAudience === "clients"
+      ? loadCoachMessages(page)
+      : loadProviderMessages(page);
   };
 
   const findChatIdByParticipantId = (
@@ -1510,7 +1729,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
       )}
     >
       {isCoach && (
-        <div className="flex items-center justify-between gap-[16px]">
+        <div className="flex items-center justify-between">
           <Tabs
             value={libraryTopTab}
             onValueChange={(tab) => setLibraryTopTab(tab as LibraryTopTab)}
@@ -1564,22 +1783,58 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
             <div
               className={cn(
                 "bg-white min-h-0",
-                selectedCoachChatForMessages ? "h-[300px] shrink-0" : "flex-1"
+                selectedChatForMessages ? "h-[300px] shrink-0" : "flex-1"
               )}
             >
               <div className="h-full flex flex-col">
                 <div className="flex items-center justify-between px-[24px] py-[28px] border-t border-b border-[#ECEFF4] shrink-0">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
+                  <Popover
+                    open={isMessagesAudienceOpen}
+                    onOpenChange={setIsMessagesAudienceOpen}
                   >
-                    <MaterialIcon
-                      iconName="keyboard_arrow_down"
-                      className="text-[#1C63DB]"
-                      size={24}
-                    />
-                    <span>Providers</span>
-                  </button>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 text-[#1C63DB] text-[18px] font-semibold"
+                      >
+                        <MaterialIcon
+                          iconName="keyboard_arrow_down"
+                          className="text-[#1C63DB]"
+                          size={24}
+                        />
+                        <span>
+                          {messagesAudience === "providers"
+                            ? "Providers"
+                            : "Clients"}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      side="bottom"
+                      className="w-[170px] p-1"
+                    >
+                      {(["providers", "clients"] as const).map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          className={cn(
+                            "w-full rounded-md px-3 py-2 text-left text-[14px] transition-colors",
+                            messagesAudience === option
+                              ? "bg-[#F3F4F6] text-[#1C63DB] font-semibold"
+                              : "text-[#1C63DB] font-semibold"
+                          )}
+                          onClick={() => {
+                            setMessagesAudience(option);
+                            setSelectedSidebarChatId(null);
+                            setIsMessagesAudienceOpen(false);
+                          }}
+                        >
+                          {option === "providers" ? "Providers" : "Clients"}
+                        </button>
+                      ))}
+                    </PopoverContent>
+                  </Popover>
                   <Popover
                     open={isDateFilterOpen}
                     onOpenChange={setIsDateFilterOpen}
@@ -1630,16 +1885,16 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto p-2">
-                  {isLoadingCoachChats ? (
+                  {messagesAudience === "clients" && isLoadingCoachChats ? (
                     <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
                       Loading chats...
                     </div>
-                  ) : filteredCoachChats.length === 0 ? (
+                  ) : filteredSidebarChats.length === 0 ? (
                     <div className="px-4 py-4 text-[14px] text-[#5F5F65]">
                       No chats yet.
                     </div>
                   ) : (
-                    filteredCoachChats.map((item) => {
+                    filteredSidebarChats.map((item) => {
                       const isActive = item.id === selectedSidebarChatId;
 
                       return (
@@ -1657,10 +1912,23 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                                 prev === item.id ? null : item.id
                               )
                             }
-                            pinned={pinnedCoachChatIds.includes(item.id)}
-                            onTogglePin={() => togglePinCoachChat(item.id)}
-                            showOwnMessagePrefix
-                            currentUserId={currentUserId}
+                            pinned={
+                              messagesAudience === "clients" &&
+                              pinnedCoachChatIds.includes(item.id)
+                            }
+                            onTogglePin={
+                              messagesAudience === "clients"
+                                ? () => togglePinCoachChat(item.id)
+                                : undefined
+                            }
+                            showOwnMessagePrefix={
+                              messagesAudience === "clients"
+                            }
+                            currentUserId={
+                              messagesAudience === "clients"
+                                ? currentUserId
+                                : undefined
+                            }
                             classname={
                               isActive
                                 ? "bg-[#1C63DB] opacity-[70%] text-white"
@@ -1676,14 +1944,14 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
               </div>
             </div>
 
-            {selectedCoachChatForMessages ? (
+            {selectedChatForMessages ? (
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 <div className="w-full h-full overflow-x-hidden p-[24px]">
                   <MessagesTab
-                    key={selectedCoachChatForMessages.chat_id}
-                    chat={selectedCoachChatForMessages}
-                    sendMessage={sendCoachMessage}
-                    loadMessages={loadCoachMessages}
+                    key={`${messagesAudience}-${selectedChatForMessages.chat_id}`}
+                    chat={selectedChatForMessages}
+                    sendMessage={sendMessageForSelectedAudience}
+                    loadMessages={loadMessagesForSelectedAudience}
                     fixedComposerBottom
                   />
                 </div>
