@@ -651,6 +651,7 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
         defaultValue={defaultTab}
         value={activeTab}
         onValueChange={setActiveTabWithLocation}
+        className="flex min-h-0 flex-1 flex-col"
       >
         {isClient ? (
           <TabsList className="border-b w-full justify-start items-center overflow-x-auto overflow-y-hidden">
@@ -866,7 +867,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
           </div>
         )}
 
-        <TabsContent value="overview">
+        <TabsContent
+          value="overview"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <div className="space-y-2 h-[calc(100vh-220px)]">
             <OverviewTab
               clientName={displayName}
@@ -928,7 +932,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="messages">
+        <TabsContent
+          value="messages"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <MessagesTab
             refetch={refetch}
             chat={chat}
@@ -937,33 +944,54 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             loadMessages={loadMessages}
           />
         </TabsContent>
-        <TabsContent value="files">
+        <TabsContent
+          value="files"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <FilesTab chatId={chatId} />
         </TabsContent>
-        <TabsContent value="recommended">
+        <TabsContent
+          value="recommended"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <RecommendedTab
             isClient={isClient}
             clientId={receiver?.user.id || location.pathname.split("/").pop()}
           />
         </TabsContent>
         {!isClient && (
-          <TabsContent value="shared-content">
+          <TabsContent
+            value="shared-content"
+            className="mt-0 min-h-0 flex-1 overflow-y-auto"
+          >
             <SharedContentTab
               isClient={false}
               clientId={receiver?.user.id || location.pathname.split("/").pop()}
             />
           </TabsContent>
         )}
-        <TabsContent value="notes">
+        <TabsContent
+          value="notes"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <NotesTab chat={chat} search={search} />
         </TabsContent>
-        <TabsContent value="medications">
+        <TabsContent
+          value="medications"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <MedicationsTab chat={chat} search={search} />
         </TabsContent>
-        <TabsContent value="supplements">
+        <TabsContent
+          value="supplements"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <SupplementsTab chat={chat} search={search} />
         </TabsContent>
-        <TabsContent value="collaborations">
+        <TabsContent
+          value="collaborations"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           {clientCoaches && clientCoaches.data.coaches.length ? (
             <ul className="p-2">
               {clientCoaches.data.coaches.map((c: any) => {
@@ -996,7 +1024,10 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
             </div>
           )}
         </TabsContent>
-        <TabsContent value="journals">
+        <TabsContent
+          value="journals"
+          className="mt-0 min-h-0 flex-1 overflow-y-auto"
+        >
           <CoachDailyJournal
             clientId={receiver?.user.id || location.pathname.split("/").pop()!}
           />

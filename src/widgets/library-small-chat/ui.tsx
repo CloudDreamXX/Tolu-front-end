@@ -42,6 +42,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Calendar,
   Card,
@@ -482,6 +485,38 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
     return details;
   }, [chatsForSelectedAudience, selectedSidebarChatId]);
+
+  const selectedChatDisplayName = useMemo(() => {
+    if (!selectedChatForMessages) return "";
+
+    if (selectedChatForMessages.name?.trim()) {
+      return selectedChatForMessages.name;
+    }
+
+    const participant = selectedChatForMessages.participants?.[0]?.user;
+    if (!participant) return "Unknown user";
+
+    if (participant.first_name && participant.last_name) {
+      return `${participant.first_name} ${participant.last_name}`;
+    }
+
+    return participant.name || participant.email || "Unknown user";
+  }, [selectedChatForMessages]);
+
+  const selectedChatInitials = useMemo(() => {
+    const name = selectedChatDisplayName.trim();
+    if (!name) return "UN";
+
+    const parts = name.split(" ").filter(Boolean);
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return parts
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("");
+  }, [selectedChatDisplayName]);
 
   const chats = useSelector((state: RootState) => state.chats.entities);
 
@@ -1946,14 +1981,32 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
 
             {selectedChatForMessages ? (
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-                <div className="w-full h-full overflow-x-hidden p-[24px]">
-                  <MessagesTab
-                    key={`${messagesAudience}-${selectedChatForMessages.chat_id}`}
-                    chat={selectedChatForMessages}
-                    sendMessage={sendMessageForSelectedAudience}
-                    loadMessages={loadMessagesForSelectedAudience}
-                    fixedComposerBottom
-                  />
+                <div className="w-full h-full overflow-x-hidden p-[24px] flex flex-col min-h-0">
+                  <div className="mb-4 pb-4 border-b border-[#ECEFF4] flex items-center gap-3 shrink-0">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage
+                        src={selectedChatForMessages.avatar_url || ""}
+                      />
+                      <AvatarFallback className="bg-[#1B63DB] opacity-[70%] text-white">
+                        {selectedChatInitials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="text-[16px] font-semibold text-[#1D1D1F] truncate">
+                        {selectedChatDisplayName}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 min-h-0 overflow-hidden">
+                    <MessagesTab
+                      key={`${messagesAudience}-${selectedChatForMessages.chat_id}`}
+                      chat={selectedChatForMessages}
+                      sendMessage={sendMessageForSelectedAudience}
+                      loadMessages={loadMessagesForSelectedAudience}
+                      fixedComposerBottom
+                    />
+                  </div>
                 </div>
               </div>
             ) : null}
