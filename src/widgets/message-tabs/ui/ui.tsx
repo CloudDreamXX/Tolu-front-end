@@ -372,14 +372,6 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     }
   };
 
-  const handleOpenHealthProfile = (clientId: string | undefined) => {
-    if (!clientId) {
-      return;
-    }
-
-    setHealthProfileClientId(clientId);
-  };
-
   const receiver = useMemo(
     () => chat?.participants?.find((p) => p.user.email !== profile?.email),
     [chat, profile?.email]
@@ -397,6 +389,26 @@ export const MessageTabs: React.FC<MessageTabsProps> = ({
     useGetCoachClientHealthHistoryQuery(healthHistoryClientId!, {
       skip: !healthHistoryClientId,
     });
+
+  const hasHealthHistory = Boolean(
+    healthHistoryData && Object.keys(healthHistoryData).length > 0
+  );
+
+  const handleOpenHealthProfile = (clientId: string | undefined) => {
+    if (!clientId) {
+      return;
+    }
+
+    if (!hasHealthHistory) {
+      toast({
+        title: "No health history found for this client",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setHealthProfileClientId(clientId);
+  };
 
   const initials = (() => {
     if (chat?.name) {
