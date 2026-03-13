@@ -142,7 +142,7 @@ export const icons = [
   "push_pin",
   "keep_off",
   "description",
-  "chat_error"
+  "chat_error",
 ] as const;
 
 export type IconName = (typeof icons)[number];

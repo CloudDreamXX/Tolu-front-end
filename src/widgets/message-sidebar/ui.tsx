@@ -12,7 +12,6 @@ import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { ScrollArea } from "shared/ui";
 import { Dock, DockIcon } from "shared/ui/dock";
 import { usePageWidth } from "shared/lib";
-import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 export interface MessageSidebarProps {
   chats: ChatItemModel[];
   isLoadingChats: boolean;
