@@ -248,7 +248,12 @@ export const SupplementItem = memo(function SupplementItem({
   onDelete,
 }: {
   supplement: Supplement;
-  onEdit: (id: string, title: string, content: string) => void;
+  onEdit: (
+    id: string,
+    title: string,
+    content: string,
+    fileInfo?: Supplement["file_info"]
+  ) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -286,7 +291,12 @@ export const SupplementItem = memo(function SupplementItem({
           value="ghost"
           aria-label="Edit"
           onClick={() =>
-            onEdit(supplement.id, supplement.title ?? "", supplement.content)
+            onEdit(
+              supplement.id,
+              supplement.title ?? "",
+              supplement.content,
+              supplement.file_info
+            )
           }
         >
           <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />
