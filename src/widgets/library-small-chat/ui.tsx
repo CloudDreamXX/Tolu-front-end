@@ -313,7 +313,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     });
   }, []);
 
-  const [providerChatMessagesById, setProviderChatMessagesById] = useState<
+  const [providerChatMessagesById] = useState<
     Record<string, ChatMessageModel[]>
   >(() =>
     Object.fromEntries(
@@ -584,43 +584,6 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
     }
   };
 
-  const sendProviderMessage = async (
-    content: string
-  ): Promise<ChatMessageModel | undefined> => {
-    if (!selectedSidebarChatId || !content.trim()) return;
-
-    const createdAt = new Date().toISOString();
-    const nextMessage: ChatMessageModel = {
-      id: `provider-local-${Date.now()}`,
-      chat_id: selectedSidebarChatId,
-      content: content.trim(),
-      message_type: "text",
-      created_at: createdAt,
-      updated_at: createdAt,
-      file_url: null,
-      file_name: null,
-      file_size: null,
-      file_type: null,
-      sender: {
-        id: String(currentUserId ?? "coach-user"),
-        email: "coach@demo.com",
-        name: "You",
-        first_name: "You",
-        last_name: "",
-      },
-    };
-
-    setProviderChatMessagesById((prev) => ({
-      ...prev,
-      [selectedSidebarChatId]: [
-        ...(prev[selectedSidebarChatId] || []),
-        nextMessage,
-      ],
-    }));
-
-    return nextMessage;
-  };
-
   const loadProviderMessages = async (
     page: number
   ): Promise<FetchChatMessagesResponse | undefined> => {
@@ -642,7 +605,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
   ): Promise<ChatMessageModel | undefined> => {
     return messagesAudience === "clients"
       ? sendCoachMessage(content)
-      : sendProviderMessage(content);
+      : Promise.resolve(undefined);
   };
 
   const loadMessagesForSelectedAudience = (
@@ -2004,6 +1967,7 @@ export const LibrarySmallChat: React.FC<LibrarySmallChatProps> = ({
                       chat={selectedChatForMessages}
                       sendMessage={sendMessageForSelectedAudience}
                       loadMessages={loadMessagesForSelectedAudience}
+                      canSend={messagesAudience === "clients"}
                       fixedComposerBottom
                     />
                   </div>
