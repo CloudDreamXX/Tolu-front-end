@@ -55,6 +55,7 @@ interface MessagesTabProps {
   search?: string;
   refetch?: () => void;
   fixedComposerBottom?: boolean;
+  canSend?: boolean;
 }
 
 type ListItem =
@@ -69,6 +70,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   loadMessages,
   refetch,
   fixedComposerBottom = false,
+  canSend = true,
 }) => {
   const token = useSelector((state: RootState) => state.user?.token);
   const { refetch: refetchChats } = useFetchAllChatsQuery(undefined, {
@@ -331,6 +333,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
+    if (!canSend) return;
+
     if (!input.trim() && files.length === 0 && filesFromLibrary.length === 0)
       return;
 
@@ -502,6 +506,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (!canSend) return;
+
     if (e.key === "Enter") {
       if (e.shiftKey) {
         return;
@@ -916,7 +922,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
                   </div>
                   <Button
                     onClick={sendAll}
-                    disabled={sending || input === ""}
+                    disabled={!canSend || sending || input === ""}
                     variant={"brightblue"}
                     className="rounded-full flex justify-center items-center
              w-[42px] h-[42px] lg:w-[96px] lg:h-[33px]"
