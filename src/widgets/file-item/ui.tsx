@@ -154,11 +154,11 @@ export const FileItem: React.FC<FileItemProps> = ({
         <div
           ref={ref}
           className={cn(
-            "h-[55px] w-fit bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center",
+            "h-[55px] max-w-full w-fit bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center",
             className
           )}
         >
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 min-w-0 flex-1">
             <div className="flex items-center justify-center w-10 h-10 overflow-hidden rounded">
               {(() => {
                 if (previewUrl) {
@@ -197,8 +197,11 @@ export const FileItem: React.FC<FileItemProps> = ({
                 }
               })()}
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-[#1D1D1F] max-w-[250px] truncate">
+            <div className="flex flex-col min-w-0 flex-1">
+              <span
+                className="block w-full overflow-hidden whitespace-nowrap text-ellipsis text-sm font-medium text-[#1D1D1F] max-w-[160px] sm:max-w-[220px]"
+                title={fileName ?? undefined}
+              >
                 {fileName}
               </span>
               <span className="text-xs font-medium text-[#5F5F65]">
@@ -221,13 +224,29 @@ export const FileItem: React.FC<FileItemProps> = ({
             })()
           ) : (
             <div className="flex gap-[4px]">
-              <Button variant="ghost" className="p-1" onClick={openPreview}>
+              <Button
+                variant="ghost"
+                className="p-1"
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void openPreview();
+                }}
+              >
                 <MaterialIcon iconName="visibility" />
               </Button>
               <Button
                 variant={"ghost"}
-                onClick={onDownloadClick}
                 className="p-1"
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void onDownloadClick();
+                }}
               >
                 <MaterialIcon iconName="download" />
               </Button>
@@ -320,14 +339,17 @@ export const FileItem: React.FC<FileItemProps> = ({
     <>
       <div
         className={cn(
-          "h-[55px] w-fit bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center",
+          "h-[55px] max-w-full w-fit bg-white px-3 py-2 rounded-md flex justify-between gap-4 items-center",
           className
         )}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 min-w-0 flex-1">
           <MaterialIcon iconName="draft" fill={1} className="text-blue-600" />
-          <div className="flex flex-col ">
-            <span className="text-sm font-medium text-[#1D1D1F] max-w-[250px] truncate">
+          <div className="flex flex-col min-w-0 flex-1">
+            <span
+              className="block w-full overflow-hidden whitespace-nowrap text-ellipsis text-sm font-medium text-[#1D1D1F] max-w-[160px] sm:max-w-[220px]"
+              title={fileName ?? undefined}
+            >
               {fileName}
             </span>
             <span className="text-xs font-medium text-[#5F5F65]">
@@ -350,10 +372,30 @@ export const FileItem: React.FC<FileItemProps> = ({
           })()
         ) : (
           <div className="flex gap-[4px]">
-            <Button variant="ghost" className="p-1" onClick={openPreview}>
+            <Button
+              variant="ghost"
+              className="p-1"
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                void openPreview();
+              }}
+            >
               <MaterialIcon iconName="visibility" />
             </Button>
-            <Button variant={"ghost"} onClick={onDownloadClick} className="p-1">
+            <Button
+              variant={"ghost"}
+              className="p-1"
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                void onDownloadClick();
+              }}
+            >
               <MaterialIcon iconName="download" />
             </Button>
           </div>

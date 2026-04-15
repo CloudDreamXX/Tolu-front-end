@@ -248,7 +248,12 @@ export const MedicationItem = memo(function MedicationItem({
   onDelete,
 }: {
   medication: Medication;
-  onEdit: (id: string, title: string, content: string) => void;
+  onEdit: (
+    id: string,
+    title: string,
+    content: string,
+    fileInfo?: Medication["file_info"]
+  ) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -286,7 +291,12 @@ export const MedicationItem = memo(function MedicationItem({
           value="ghost"
           aria-label="Edit"
           onClick={() =>
-            onEdit(medication.id, medication.title ?? "", medication.content)
+            onEdit(
+              medication.id,
+              medication.title ?? "",
+              medication.content,
+              medication.file_info
+            )
           }
         >
           <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />

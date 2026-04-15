@@ -375,7 +375,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
         custom_message: "",
       };
       await updateHealthHistory(data).unwrap();
-      nav(`/content-manager/messages/${clientId}`);
+      nav(`/clients/${clientId}`);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -423,7 +423,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
           {/* <div className="flex gap-4 text-[16px] font-semibold text-[#1C63DB]">
             <Button variant={"unstyled"} size={"unstyled"}
               className="hidden md:flex items-center gap-[8px] px-[12px] py-[4px]"
-              onClick={() => nav(`/content-manager/messages/${clientId}`)}
+              onClick={() => nav(`/clients/${clientId}`)}
             >
               <MaterialIcon iconName="forum" fill={1} />
               Chat
@@ -657,7 +657,7 @@ export const SelectedClientModal: React.FC<SelectedClientModalProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             className="w-full md:hidden p-[16px] py-[10px] rounded-[1000px] bg-[#D6ECFD] text-[#1C63DB] text-[16px] font-semibold flex gap-[8px] items-center justify-center"
-            onClick={() => nav(`/content-manager/messages/${clientId}`)}
+            onClick={() => nav(`/clients/${clientId}`)}
           >
             <MaterialIcon iconName="forum" fill={1} />
             Chat

@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
 import { FileItem } from "widgets/file-item";
-import { toUserTZ } from "widgets/message-tabs/helpers";
+import { getAvatarUrl, toUserTZ } from "widgets/message-tabs/helpers";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import {
@@ -50,6 +50,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }, [message.reactions]);
 
   const user = useSelector((state: RootState) => state.user.user);
+  const isClientView = user?.roleName === "Client";
 
   const [addReaction] = useAddMessageReactionMutation();
   const [deleteReaction] = useDeleteMessageReactionMutation();
@@ -61,6 +62,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
+  const [avatarSrc, setAvatarSrc] = useState("");
 
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const [pickerPosition, setPickerPosition] = useState<{
@@ -81,6 +83,27 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }, [message.content]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const resolveAvatar = async () => {
+      if (!avatar) {
+        if (isMounted) setAvatarSrc("");
+        return;
+      }
+
+      const filename = avatar.split("/").pop() || avatar;
+      const resolved = await getAvatarUrl(filename);
+      if (isMounted) setAvatarSrc(resolved);
+    };
+
+    resolveAvatar();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [avatar]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (!(e.target as HTMLElement).closest("[data-message-menu]")) {
         setMenuOpen(false);
@@ -99,10 +122,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   const renderFileMessage = () => (
     <div
       className={cn(
-        "rounded-lg  p-2 text-base text-[#1D1D1F] flex flex-wrap gap-2 w-fit",
-        isOwn
-          ? "bg-[#AAC6EC] rounded-tr-none"
-          : "bg-white border border-[#DBDEE1] rounded-tl-none",
+        "text-base text-[#1D1D1F] flex flex-wrap gap-2 max-w-full",
+        isOwn ? "rounded-tr-none" : "rounded-tl-none",
         className
       )}
     >
@@ -112,7 +133,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         fileSize={message.file_size}
         fileUrl={message.file_url}
         fileType={message.file_type}
-        className={cn(isOwn ? "bg-white " : "bg-[#AAC6EC]")}
+        className={cn(
+          isOwn ? "bg-blue-500/10" : "bg-white",
+          "max-w-full w-full"
+        )}
       />
     </div>
   );
@@ -165,11 +189,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     return (
       <div
         className={cn(
-          "inline-block rounded-lg px-[14px] py-[10px] text-base text-[#1D1D1F]",
+          "inline-block rounded-lg text-base text-[#1D1D1F]",
           "max-w-full overflow-hidden break-words whitespace-pre-wrap",
           isOwn
-            ? "bg-[#AAC6EC] rounded-tr-none"
-            : "bg-white border border-[#DBDEE1] rounded-tl-none",
+            ? "rounded-tr-none bg-blue-500/10 py-[10px] px-[14px]"
+            : "rounded-tl-none bg-white",
+          isClientView ? "py-[10px] px-[14px]" : "",
           className
         )}
       >
@@ -256,14 +281,22 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
-    const spaceRight = viewportWidth - rect.left;
-    const spaceLeft = rect.right;
+    const spaceWhenAlignedLeft = viewportWidth - rect.left;
+    const spaceWhenAlignedRight = rect.right;
+
+    const preferredHorizontal = isOwn ? "right" : "left";
+    const canUsePreferred =
+      preferredHorizontal === "right"
+        ? spaceWhenAlignedRight >= pickerWidth
+        : spaceWhenAlignedLeft >= pickerWidth;
+
+    const fallbackHorizontal =
+      spaceWhenAlignedRight > spaceWhenAlignedLeft ? "right" : "left";
 
     setPickerPosition({
       vertical:
         spaceBelow < pickerHeight && spaceAbove > spaceBelow ? "top" : "bottom",
-      horizontal:
-        spaceRight < pickerWidth && spaceLeft > spaceRight ? "right" : "left",
+      horizontal: canUsePreferred ? preferredHorizontal : fallbackHorizontal,
     });
 
     setEmojiModalOpen((prev) => !prev);
@@ -346,10 +379,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   return (
     <div className={cn("flex flex-col w-full", isOwn ? "" : "items-start")}>
       <div className={cn("flex", isOwn && "justify-end")}>
-        {!isMobile && !isOwn && (
+        {!isMobile && !isOwn && isClientView && (
           <div className="relative mr-3">
             <Avatar className="w-10 h-10 ">
-              <AvatarImage src={avatar} />
+              <AvatarImage src={avatarSrc} />
               <AvatarFallback className="bg-slate-300">
                 {initials}
               </AvatarFallback>
@@ -378,7 +411,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
           <div
             ref={bubbleRef}
-            className="relative w-fit"
+            className="relative w-fit max-w-full"
             onClick={isEditing ? undefined : openEmojiPicker}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -450,17 +483,19 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           shadow-[0px_8px_18px_rgba(0,0,0,0.15)]
           z-50 w-[160px] gap-[6px] bg-white w-fit flex flex-col items-start rounded-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
                   >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMenuOpen(false);
-                        setIsEditing(true);
-                      }}
-                      className="w-full px-[14px] py-[10px] flex items-center gap-[8px]"
-                    >
-                      <MaterialIcon iconName="edit" />
-                      Edit
-                    </button>
+                    {!message.content.startsWith("Shared") && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMenuOpen(false);
+                          setIsEditing(true);
+                        }}
+                        className="w-full px-[14px] py-[10px] flex items-center gap-[8px]"
+                      >
+                        <MaterialIcon iconName="edit" />
+                        Edit
+                      </button>
+                    )}
 
                     <button
                       onClick={(e) => {

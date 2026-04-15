@@ -67,6 +67,14 @@ export const searchApi = createApi({
         response.data,
       providesTags: ["SearchSession"],
     }),
+
+    getAudioFile: builder.query<Blob, string>({
+      query: (fileId) => ({
+        url: `/audio/${fileId}`,
+        responseHandler: (response) => response.blob(),
+      }),
+      transformResponse: (response: Blob) => response,
+    }),
   }),
 });
 
@@ -74,6 +82,7 @@ export const {
   useGetSearchHistoryQuery,
   useGetSessionQuery,
   useLazyGetSessionQuery,
+  useLazyGetAudioFileQuery,
 } = searchApi;
 
 export class SearchService {

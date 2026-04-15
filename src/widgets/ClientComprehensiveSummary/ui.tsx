@@ -68,6 +68,7 @@ import {
   prune,
 } from "widgets/health-profile-form/ui/lib";
 import { HealthHistorySummary } from "widgets/HealthHistorySummary/ui";
+import { toast } from "shared/lib";
 
 const steps = [
   // "Basic Info",
@@ -169,12 +170,16 @@ export const ClientComprehensiveSummary = ({
   }
 
   if (isError) {
-    return <div>Unable to load health history</div>;
+    toast({
+      title: "No health history found for that client",
+      variant: "destructive",
+    });
+    return null;
   }
 
   const content =
     viewMode === "summary" ? (
-      <div className="overflow-y-auto max-h-[calc(100vh-130px)]">
+      <div className="overflow-y-auto scrollbar-thin max-h-[calc(100vh-264px)]">
         <HealthHistorySummary
           data={healthHistoryData!}
           onEditSection={(step) => {
@@ -193,7 +198,7 @@ export const ClientComprehensiveSummary = ({
           onStepClick={goToStep}
         />
 
-        <div className="flex-1 overflow-y-auto max-h-[65vh]">
+        <div className="flex-1 overflow-y-auto scrollbar-thin max-h-[55vh]">
           <Form {...form}>
             {/* {currentStep === 0 && <BasicInfoStep form={form} />} */}
             {currentStep === 0 && <BirthBodyStep form={form} />}

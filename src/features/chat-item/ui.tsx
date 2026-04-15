@@ -1,7 +1,9 @@
 import { ChatItemModel } from "entities/chat";
-import { cn } from "shared/lib";
+import { useEffect, useState } from "react";
+import { cn, usePageWidth } from "shared/lib";
 import { Avatar, AvatarFallback, AvatarImage, Button } from "shared/ui";
-import { toUserTZ } from "../../widgets/message-tabs/helpers";
+import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
+import { getAvatarUrl, toUserTZ } from "../../widgets/message-tabs/helpers";
 
 export const timeAgo = (date: string | Date | null) => {
   if (!date) return "—";
@@ -33,13 +35,50 @@ interface ChatItemProps {
   item: ChatItemModel;
   onClick?: () => void;
   classname?: string;
+  detailed?: boolean;
+  pinned?: boolean;
+  onTogglePin?: () => void;
+  showOwnMessagePrefix?: boolean;
+  currentUserId?: string;
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
   item,
   onClick,
   classname,
+  detailed = false,
+  pinned = false,
+  onTogglePin,
+  showOwnMessagePrefix = false,
+  currentUserId,
 }) => {
+  const { isMobileOrTablet } = usePageWidth();
+  const showDetailed = detailed || isMobileOrTablet;
+  const [avatarSrc, setAvatarSrc] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const resolveAvatar = async () => {
+      const rawAvatar = item.avatar_url;
+      if (!rawAvatar) {
+        if (isMounted) setAvatarSrc("");
+        return;
+      }
+
+      const filename = rawAvatar.split("/").pop() || rawAvatar;
+      const resolved = await getAvatarUrl(filename);
+      if (!isMounted) return;
+      setAvatarSrc(resolved);
+    };
+
+    resolveAvatar();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [item.avatar_url]);
+
   const initials = (() => {
     if (item.type === "group") {
       return item.name
@@ -82,50 +121,96 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     return "UN";
   })();
 
+  const lastMessageContent =
+    item.lastMessage?.content || "There are no messages ...";
+  const lastMessageSenderId =
+    item.lastMessage?.sender?.id || item.lastMessage?.sender?.user_id;
+  const shouldPrefixOwnMessage =
+    showOwnMessagePrefix &&
+    Boolean(currentUserId) &&
+    Boolean(lastMessageSenderId) &&
+    String(lastMessageSenderId) === String(currentUserId);
+
   return (
     <Button
       variant={"unstyled"}
       size={"unstyled"}
-      className={cn(
-        "flex flex-col w-full gap-2 lg:gap-4 p-4 md:px-6 md:py-5 lg:p-4 lg:pl-8 border-b cursor-pointer hover:bg-white border-[#DBDEE1] text-left",
-        classname
-      )}
+      className={
+        "flex flex-col w-full gap-2 lg:gap-4 p-4 md:px-6 md:py-5 lg:py-[12px] lg:px-[18px] cursor-pointer text-left"
+      }
       onClick={onClick}
     >
       <div className="flex justify-between ">
-        <div className="flex items-center ">
-          <div className="relative mr-3">
-            <Avatar className="w-10 h-10 ">
-              <AvatarImage src={item.avatar_url} />
-              <AvatarFallback className="bg-slate-300">
+        <div className="flex items-center gap-[12px]">
+          <div className={isMobileOrTablet ? "relative mr-3" : "relative"}>
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={avatarSrc} />
+              <AvatarFallback className={cn("bg-slate-300", classname)}>
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border border-white rounded-full" />
           </div>
-          <div className="flex">
-            <span className="font-semibold text-[18px] text-[#1D1D1F]">
-              {item.name ||
-                (item.participants[0]?.first_name &&
-                  item.participants[0]?.last_name &&
-                  `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`) ||
-                item.participants[0]?.name}
-            </span>
-          </div>
+          {showDetailed && (
+            <div className="flex">
+              <span
+                className={cn(
+                  "font-semibold text-[#1D1D1F]",
+                  isMobileOrTablet ? "text-[18px]" : "text-[14px]"
+                )}
+              >
+                {item.name ||
+                  (item.participants[0]?.first_name &&
+                    item.participants[0]?.last_name &&
+                    `${item.participants[0]?.first_name} ${item.participants[0]?.last_name}`) ||
+                  item.participants[0]?.name}
+              </span>
+            </div>
+          )}
         </div>
-        <div className="flex flex-col h-fit">
-          <p className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
-            {timeAgo(toUserTZ(item.lastMessage?.created_at ?? "") ?? "")}
-          </p>
+        {showDetailed && (
+          <div className="flex flex-col h-fit">
+            <div className="flex items-center gap-1">
+              {onTogglePin ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTogglePin();
+                  }}
+                  className="inline-flex items-center justify-center w-5 h-5"
+                  aria-label={pinned ? "Unpin chat" : "Pin chat"}
+                  title={pinned ? "Unpin chat" : "Pin chat"}
+                >
+                  <MaterialIcon
+                    iconName="push_pin"
+                    fill={pinned ? 1 : 0}
+                    size={16}
+                    className={cn(
+                      "text-[16px]",
+                      pinned ? "text-[#1C63DB]" : "text-[#8C8C93]"
+                    )}
+                  />
+                </button>
+              ) : null}
+              <p className="text-muted-foreground text-[14px] font-semibold self-start text-nowrap">
+                {timeAgo(toUserTZ(item.lastMessage?.created_at ?? "") ?? "")}
+              </p>
+            </div>
 
-          <p className="text-blue-500 text-[14px] self-end mt-2">
-            {item.unreadCount ? `(${item.unreadCount})` : ""}
-          </p>
-        </div>
+            <p className="text-blue-500 text-[14px] self-end mt-2">
+              {item.unreadCount ? `(${item.unreadCount})` : ""}
+            </p>
+          </div>
+        )}
       </div>
-      <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
-        {item.lastMessage?.content || "There are no messages ..."}
-      </p>
+      {showDetailed && (
+        <p className="text-muted-foreground text-[14px] font-normal max-w-[250px] truncate">
+          {shouldPrefixOwnMessage
+            ? `You: ${lastMessageContent}`
+            : lastMessageContent}
+        </p>
+      )}
     </Button>
   );
 };

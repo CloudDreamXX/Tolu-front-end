@@ -48,11 +48,43 @@ export const coachApi = createApi({
       { success: boolean; message: string },
       { payload: InviteClientPayload | null; file?: File }
     >({
-      query: ({ payload }) => {
+      query: ({ payload, file }) => {
+        if (file) {
+          const formData = new FormData();
+          formData.append("file", file);
+          return {
+            url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
+            method: "POST",
+            body: formData,
+          };
+        }
         return {
           url: API_ROUTES.COACH_ADMIN.POST_CLIENT,
           method: "POST",
           body: payload,
+          headers: { "Content-Type": "application/json" },
+        };
+      },
+    }),
+
+    importClients: builder.mutation<
+      { success: boolean; message: string },
+      { file?: File }
+    >({
+      query: ({ file }) => {
+        if (file) {
+          const formData = new FormData();
+          formData.append("file", file);
+          return {
+            url: API_ROUTES.COACH_ADMIN.POST_CLIENT_FILE,
+            method: "POST",
+            body: formData,
+          };
+        }
+        return {
+          url: API_ROUTES.COACH_ADMIN.POST_CLIENT_FILE,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
         };
       },
     }),
@@ -452,6 +484,7 @@ export const {
   useGetManagedClientsQuery,
   useLazyGetManagedClientsQuery,
   useInviteClientMutation,
+  useImportClientsMutation,
   useDeleteClientMutation,
   useEditClientMutation,
   useLazyGetClientInfoQuery,

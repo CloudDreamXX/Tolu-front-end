@@ -101,9 +101,11 @@ export const AddClientModal: React.FC<AddClientModalProps> = ({
         </span>
 
         <div className="flex gap-[24px] items-center mb-[16px] md:mb-[24px]">
-          <div className="flex items-center gap-[8px]">
+          <div className="flex items-center gap-[8px] text-black">
             <MaterialIcon iconName="account_circle" size={24} />
-            <h2 className="text-[20px] font-[700]">Add new client</h2>
+            <h2 className="text-[20px] font-[700] text-black">
+              Add new client
+            </h2>
           </div>
           <span
             className="absolute z-20 visible cursor-pointer md:hidden top-6 right-4"

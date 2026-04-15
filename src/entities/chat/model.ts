@@ -7,6 +7,7 @@ export interface MessageUser {
   name: string;
   first_name: string;
   last_name: string;
+  client_age?: number | null;
 }
 
 export interface ChatItemModel {
@@ -98,7 +99,6 @@ export interface UploadChatFileResponse {
 }
 
 export interface ChatFileUploadResponse {
-  success: boolean;
   type: string;
   files_count?: number;
   messages?: ChatMessageModel[];

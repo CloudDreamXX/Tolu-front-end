@@ -58,6 +58,7 @@
     "input-otp": "^1.4.2",
     "mammoth": "^1.11.0",
     "marked": "^16.0.0",
+    "motion": "^12.34.0",
     "primereact": "^10.9.7",
     "quill": "^2.0.3",
     "react": "^18.3.1",

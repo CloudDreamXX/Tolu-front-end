@@ -246,7 +246,12 @@ export const NoteItem = memo(function NoteItem({
   onDelete,
 }: {
   note: ChatNoteResponse;
-  onEdit: (id: string, content: string, title: string) => void;
+  onEdit: (
+    id: string,
+    title: string,
+    content: string,
+    fileInfo?: ChatNoteResponse["file_info"]
+  ) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -279,7 +284,9 @@ export const NoteItem = memo(function NoteItem({
         <Button
           value="ghost"
           aria-label="Edit"
-          onClick={() => onEdit(note.id, note.title, note.content)}
+          onClick={() =>
+            onEdit(note.id, note.title, note.content, note.file_info)
+          }
         >
           <MaterialIcon iconName="edit" className="w-4 h-4 p-0 text-black" />
         </Button>

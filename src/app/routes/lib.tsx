@@ -6,11 +6,10 @@ import {
   ContentManagerCreatePage,
   ContentManagerDocument,
   ContentManagerFolder,
+  ContentManagerMessages,
   ContentManagerPublished,
   FilesLibrary,
 } from "pages/content-manager";
-import { ContentManagerClients } from "pages/content-manager/clients";
-import { ContentManagerMessages } from "pages/content-manager/messages";
 import { ContentManagerProfile } from "pages/content-manager/profile";
 import { HealthSnapshot } from "pages/health-snapshot";
 import { Library } from "pages/library";
@@ -43,6 +42,8 @@ import { usePageWidth } from "shared/lib";
 import { CheckInvite } from "widgets/auth-forms/ui/check-invite";
 import { AdminProfile } from "pages/admin-profile";
 import { AdminRequests } from "pages/admin-requests";
+import { ContentManagerDashboard } from "pages/content-manager/dashboard";
+import { ContentManagerSettings } from "pages/content-manager/settings";
 
 export const AppRoutes = () => {
   const { isMobileOrTablet } = usePageWidth();
@@ -82,6 +83,8 @@ export const AppRoutes = () => {
           </MainLayout>
         }
       >
+        <Route path="/dashboard" element={<ContentManagerDashboard />} />
+        <Route path="/settings" element={<ContentManagerSettings />} />
         <Route
           path="/content-manager/profile"
           element={<ContentManagerProfile />}
@@ -90,14 +93,8 @@ export const AppRoutes = () => {
           path="/content-manager/create"
           element={<ContentManagerCreatePage />}
         />
-        <Route
-          path="/content-manager/messages"
-          element={<ContentManagerMessages />}
-        />
-        <Route
-          path="/content-manager/messages/:chatId"
-          element={<ContentManagerMessages />}
-        />
+        <Route path="/clients" element={<ContentManagerMessages />} />
+        <Route path="/clients/:chatId" element={<ContentManagerMessages />} />
         <Route
           path="/content-manager/ai-generated"
           element={<ContentManagerAiGenerated />}
@@ -114,7 +111,6 @@ export const AppRoutes = () => {
           path="/content-manager/published"
           element={<ContentManagerPublished />}
         />
-        <Route path="/clients" element={<ContentManagerClients />} />
         <Route
           path="/content-manager/archived"
           element={<ContentManagerArchived />}
@@ -146,7 +142,7 @@ export const AppRoutes = () => {
               to={
                 isMobileOrTablet
                   ? `/content-manager/library/new_chat_${Date.now()}`
-                  : "/content-manager/create"
+                  : "/clients"
               }
             />
           }

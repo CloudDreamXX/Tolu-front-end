@@ -13,14 +13,18 @@ import {
   useFetchAllChatsQuery,
   useUploadChatFileMutation,
 } from "entities/chat/api";
+import { setFilesFromLibrary } from "entities/client/lib";
+import { useLazyDownloadFileLibraryQuery } from "entities/files-library/api";
+import { fileKeyFromUrl } from "entities/chat/helpers";
 import { applyIncomingMessage, updateChat } from "entities/chat/chatsSlice";
 import { RootState } from "entities/store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { API_ROUTES } from "shared/api";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
-import { Button, Input, Textarea } from "shared/ui";
+import { Button, Textarea } from "shared/ui";
 import { PopoverAttach } from "widgets/content-popovers";
 import { dayKey, formatDayLabel } from "widgets/message-tabs/helpers";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
@@ -50,6 +54,8 @@ interface MessagesTabProps {
   ) => Promise<FetchChatMessagesResponse | undefined>;
   search?: string;
   refetch?: () => void;
+  fixedComposerBottom?: boolean;
+  canSend?: boolean;
 }
 
 type ListItem =
@@ -63,12 +69,15 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   sendMessage,
   loadMessages,
   refetch,
+  fixedComposerBottom = false,
+  canSend = true,
 }) => {
   const token = useSelector((state: RootState) => state.user?.token);
   const { refetch: refetchChats } = useFetchAllChatsQuery(undefined, {
     skip: !token,
   });
   const [uploadFile] = useUploadChatFileMutation();
+  const [downloadLibraryFile] = useLazyDownloadFileLibraryQuery();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
@@ -77,7 +86,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
     items,
     files,
     open,
-    getInputProps,
     remove,
     getDropzoneProps,
     dragOver,
@@ -95,6 +103,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [page, setPage] = useState<number>(1);
   const [atBottom, setAtBottom] = useState(true);
   const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+  const [isAttachPopoverOpen, setIsAttachPopoverOpen] = useState(false);
 
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -162,6 +171,29 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   const [sendNote] = useSendChatNoteMutation();
   const [createMedication] = useCreateMedicationMutation();
   const [createSupplement] = useCreateSupplementMutation();
+
+  const preloadUploadedFilePreview = useCallback(
+    (message?: ChatMessageModel | null) => {
+      const fileUrl = message?.file_url;
+      if (!fileUrl) return;
+
+      const fileKey = fileKeyFromUrl(fileUrl);
+      if (!fileKey) return;
+
+      const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(
+        /\/$/,
+        ""
+      );
+
+      void fetch(
+        `${baseUrl}${API_ROUTES.CHAT.UPLOADED_FILE.replace("{filename}", fileKey)}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }
+      );
+    },
+    [token]
+  );
 
   const handleAddSelectionToNotes = async (text: string) => {
     try {
@@ -301,6 +333,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }, [chat?.chat_id]);
 
   const sendAll = async () => {
+    if (!canSend) return;
+
     if (!input.trim() && files.length === 0 && filesFromLibrary.length === 0)
       return;
 
@@ -358,15 +392,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           file: file,
         }).unwrap();
         if (response?.data.type === "file_upload") {
+          const uploadedMessage = response.data.messages?.[0];
+
+          preloadUploadedFilePreview(uploadedMessage);
+
           const newMsg: ChatMessageModel = {
-            id: response.data.message_id || "",
-            content: response.data.file_name || "",
+            id: uploadedMessage?.id || "",
+            content: uploadedMessage?.file_name || "",
             chat_id: chat.chat_id,
             created_at: new Date().toISOString(),
-            file_url: response.data.file_url || "",
-            file_name: response.data.file_name || "",
-            file_size: response.data.file_size || 0,
-            file_type: "file_upload",
+            file_url: uploadedMessage?.file_url || "",
+            file_name: uploadedMessage?.file_name || "",
+            file_size: uploadedMessage?.file_size || 0,
+            file_type: uploadedMessage?.file_type || file.type,
             sender: {
               id: profile!.id,
               email: profile!.email,
@@ -392,22 +430,47 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
 
     if (filesFromLibrary.length > 0) {
       try {
-        const response = await uploadFile({
-          chatId: chat.chat_id,
-          file: undefined,
-          libraryFiles: filesFromLibrary,
-        });
+        const uploadedLibraryMessages: ChatMessageModel[] = [];
 
-        if (
-          response?.data?.data.type === "library_files" &&
-          response.data.data.messages &&
-          response.data.data.messages?.length
-        ) {
-          setMessages((prev) => {
-            const filtered = prev.filter((m) => !m.id.startsWith("tmp-lib"));
-            return [...filtered, ...(response.data?.data.messages || [])];
+        for (const libraryFileId of filesFromLibrary) {
+          const downloadResult = await downloadLibraryFile({
+            fileId: libraryFileId,
           });
+
+          if (!("data" in downloadResult) || !downloadResult.data) {
+            continue;
+          }
+
+          const blob = downloadResult.data;
+          const extFromType = blob.type.split("/")[1] || "bin";
+          const fileFromLibrary = new File(
+            [blob],
+            `library-${libraryFileId}.${extFromType}`,
+            {
+              type: blob.type || "application/octet-stream",
+            }
+          );
+
+          const response = await uploadFile({
+            chatId: chat.chat_id,
+            file: fileFromLibrary,
+          }).unwrap();
+
+          if (response?.data.type === "file_upload") {
+            const uploadedMessage = response.data.messages?.[0];
+
+            if (uploadedMessage) {
+              preloadUploadedFilePreview(uploadedMessage);
+              uploadedLibraryMessages.push(uploadedMessage);
+            }
+          }
         }
+
+        if (uploadedLibraryMessages.length > 0) {
+          setMessages((prev) => [...prev, ...uploadedLibraryMessages]);
+        }
+
+        dispatch(setFilesFromLibrary([]));
       } catch (e) {
         console.error("library file upload failed", e);
       }
@@ -423,7 +486,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       if (!newMsg) throw new Error("Failed to send message");
 
       if (chat.chat_type === "new_chat") {
-        nav(`/content-manager/messages/${newMsg.chat_id}`);
+        nav(`/clients/${newMsg.chat_id}`);
         refetchChats();
       }
 
@@ -443,6 +506,8 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (!canSend) return;
+
     if (e.key === "Enter") {
       if (e.shiftKey) {
         return;
@@ -500,7 +565,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   };
 
   const containerStyleLg = {
-    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 316px)`,
+    height: isClient ? `calc(100vh - 322px)` : `calc(100vh - 420px)`,
   };
 
   let currentStyle = containerStyleLg;
@@ -512,7 +577,7 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
       return (
         <MaterialIcon
           iconName="progress_activity"
-          className="text-blue-600 animate-spin"
+          className="text-white animate-spin"
         />
       );
     }
@@ -691,8 +756,19 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
   }
 
   return (
-    <>
-      <div style={currentStyle} className="relative w-full pr-3">
+    <div
+      className={cn(
+        "w-full",
+        fixedComposerBottom ? "h-full min-h-0 flex flex-col" : ""
+      )}
+    >
+      <div
+        style={fixedComposerBottom ? undefined : currentStyle}
+        className={cn(
+          "relative w-full",
+          fixedComposerBottom ? "flex-1 min-h-0 pr-0" : "pr-3"
+        )}
+      >
         {listData.length === 0 ? (
           rendeerEmptyState()
         ) : (
@@ -720,118 +796,144 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
             variant={"unstyled"}
             size={"unstyled"}
             onClick={scrollToBottom}
-            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 -bottom-4 hover:bg-blue-600"
+            className="absolute h-10 p-2 text-white transition bg-blue-500 rounded-full shadow-lg right-4 bottom-2 hover:bg-blue-600"
           >
             <MaterialIcon iconName="keyboard_arrow_down" />
           </Button>
         )}
       </div>
 
-      <div className="pt-2">
-        <Textarea
-          placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
-          className={cn("resize-none min-h-[80px]")}
-          containerClassName={cn(
-            "px-4 py-3",
-            dragOver ? "border-2 border-dashed border-blue-500" : undefined
+      <div
+        className={cn(
+          "pt-2",
+          fixedComposerBottom ? "sticky bottom-0 z-20 bg-white" : ""
+        )}
+      >
+        <div className="relative">
+          {!isClient && (
+            <Button
+              type="button"
+              className="absolute top-2 right-2 z-10 w-10 h-10 p-0 rounded-full text-[#1C63DB] bg-white"
+              title="Read text"
+              onClick={() => {
+                if (window.speechSynthesis) {
+                  const utterance = new window.SpeechSynthesisUtterance(input);
+                  utterance.lang = "en-US";
+                  window.speechSynthesis.speak(utterance);
+                }
+              }}
+            >
+              <MaterialIcon iconName="mic" size={22} />
+            </Button>
           )}
-          value={input}
-          onValueChange={setInput}
-          onKeyDown={handleKeyPress}
-          {...getDropzoneProps()}
-          onClick={() => ({})}
-          footer={
-            <div className="flex flex-col w-full text-[#1D1D1F]">
-              <div className="flex items-center justify-between w-full ">
-                <div className="flex items-center gap-4">
-                  <Input {...getInputProps()} className="hidden" />
-                  {isClient ? (
-                    <label
-                      className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
-                    >
-                      <Button
-                        variant="ghost"
-                        className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80"
-                        onClick={open}
+          <Textarea
+            placeholder={`Message ${receiver?.user.first_name ? receiver?.user.first_name : ""} ${receiver?.user.last_name ? receiver?.user.last_name : ""}`}
+            className={cn(
+              "resize-none min-h-[80px]",
+              isClient ? "" : "xl:text-[16px] placeholder:text-[#B3BCC8]"
+            )}
+            containerClassName={cn(
+              "px-4 py-3",
+              dragOver ? "border-2 border-dashed border-blue-500" : undefined,
+              isClient ? "" : "rounded-[8px] border-[#ECEFF4]"
+            )}
+            value={input}
+            onValueChange={setInput}
+            onKeyDown={handleKeyPress}
+            {...getDropzoneProps()}
+            onClick={() => ({})}
+            footer={
+              <div className="flex flex-col w-full text-[#1D1D1F]">
+                <div className="flex items-center justify-between w-full ">
+                  <div className="flex items-center gap-4">
+                    {/* <Input {...getInputProps()} className="hidden" /> */}
+                    {isClient ? (
+                      <label
+                        className={`relative items-center text-gray-600 transition-colors rounded-lg cursor-pointer hover:text-gray-800 hidden md:flex`}
                       >
-                        <MaterialIcon iconName="attach_file" />
-                      </Button>
-                      {files.length > 0 && (
-                        <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
-                          {files.length > 99 ? "99+" : files.length}
-                        </span>
-                      )}
-                    </label>
-                  ) : (
-                    <PopoverAttach
-                      files={files}
-                      setFiles={setFiles}
-                      title="Attach files"
-                      customTrigger={
                         <Button
                           variant="ghost"
-                          className="relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-10 h-10 hover:bg-secondary/80"
+                          className={`relative text-[#1D1D1F] bg-[#F3F6FB] rounded-full w-12 h-12 hover:bg-secondary/80`}
+                          onClick={open}
                         >
-                          <MaterialIcon
-                            iconName="attach_file"
-                            size={24}
-                            fill={1}
-                          />
-                          {(files.length > 0 ||
-                            filesFromLibrary.length > 0) && (
-                            <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
-                              {files.length + filesFromLibrary.length}
-                            </span>
-                          )}
+                          <MaterialIcon iconName="attach_file" />
                         </Button>
-                      }
-                    />
-                  )}
-
-                  <div className="relative">
-                    <Button
-                      value={"ghost"}
-                      className="p-0"
-                      onClick={(e) => {
-                        setEmojiModalOpen(true);
-                        e.stopPropagation();
-                      }}
-                    >
-                      <MaterialIcon
-                        iconName="sentiment_satisfied"
-                        className="text-[#1D1D1F]"
+                        {files.length > 0 && (
+                          <span className="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -left-1">
+                            {files.length > 99 ? "99+" : files.length}
+                          </span>
+                        )}
+                      </label>
+                    ) : (
+                      <PopoverAttach
+                        files={files}
+                        setFiles={setFiles}
+                        title="Attach files"
+                        onOpenChange={setIsAttachPopoverOpen}
+                        customTrigger={
+                          <Button
+                            variant="ghost"
+                            className="relative text-[#1D1D1F] rounded-full w-10 h-10 hover:bg-secondary/80"
+                          >
+                            <MaterialIcon
+                              iconName={isAttachPopoverOpen ? "close" : "add"}
+                            />
+                            {(files.length > 0 ||
+                              filesFromLibrary.length > 0) && (
+                              <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
+                                {files.length + filesFromLibrary.length}
+                              </span>
+                            )}
+                          </Button>
+                        }
                       />
-                    </Button>
-
-                    {emojiModalOpen && (
-                      <div className="absolute mb-2 bottom-full -left-[80px]">
-                        <Picker
-                          data={data}
-                          onEmojiSelect={(emoji: { native: string }) => {
-                            setInput((prev) => prev + emoji.native);
-                          }}
-                          onClickOutside={() => setEmojiModalOpen(false)}
-                          theme="light"
-                          previewPosition="none"
-                          skinTonePosition="none"
-                        />
-                      </div>
                     )}
+
+                    <div className="relative">
+                      <Button
+                        value={"ghost"}
+                        className="p-0"
+                        onClick={(e) => {
+                          setEmojiModalOpen(true);
+                          e.stopPropagation();
+                        }}
+                      >
+                        <MaterialIcon
+                          iconName="sentiment_satisfied"
+                          className="text-[#1D1D1F]"
+                        />
+                      </Button>
+
+                      {emojiModalOpen && (
+                        <div className="absolute mb-2 bottom-full -left-[80px]">
+                          <Picker
+                            data={data}
+                            onEmojiSelect={(emoji: { native: string }) => {
+                              setInput((prev) => prev + emoji.native);
+                            }}
+                            onClickOutside={() => setEmojiModalOpen(false)}
+                            theme="light"
+                            previewPosition="none"
+                            skinTonePosition="none"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  <Button
+                    onClick={sendAll}
+                    disabled={!canSend || sending || input === ""}
+                    variant={"brightblue"}
+                    className="rounded-full flex justify-center items-center
+             w-[42px] h-[42px] lg:w-[96px] lg:h-[33px]"
+                  >
+                    {renderSend()}
+                  </Button>
                 </div>
-                <Button
-                  onClick={sendAll}
-                  disabled={sending}
-                  variant={isMobileOrTablet ? "brightblue" : "blue"}
-                  className="rounded-full flex justify-center items-center
-             w-[42px] h-[42px] lg:w-[128px]"
-                >
-                  {renderSend()}
-                </Button>
               </div>
-            </div>
-          }
-        />
+            }
+          />
+        </div>
       </div>
 
       {selectedTextRange && !isClient && (
@@ -842,6 +944,6 @@ export const MessagesTab: React.FC<MessagesTabProps> = ({
           onAddSupplement={handleAddSelectionToSupplements}
         />
       )}
-    </>
+    </div>
   );
 };

@@ -131,6 +131,7 @@ export interface SearchResultResponseItem {
   content_id: string | null;
   text_quote: string | null;
   stored_files: {
+    id: string;
     path: string;
     size: number;
     source: string;

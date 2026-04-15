@@ -818,10 +818,9 @@ export const ContentManagerClients: React.FC = () => {
                           className={`w-full ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
-                            navigate(
-                              `/content-manager/messages/${client.client_id}`,
-                              { state: { id: "profile" } }
-                            );
+                            navigate(`/clients/${client.client_id}`, {
+                              state: { id: "profile" },
+                            });
                           }}
                           disabled={client.status !== "active"}
                         >
@@ -880,9 +879,7 @@ export const ContentManagerClients: React.FC = () => {
                       className={`items-center justify-center ${isWide ? "flex" : "hidden"} ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                       disabled={client.status !== "active"}
                       onClick={() => {
-                        navigate(
-                          `/content-manager/messages/${client.client_id}`
-                        );
+                        navigate(`/clients/${client.client_id}`);
                       }}
                     >
                       <MaterialIcon iconName="forum" fill={1} />
@@ -966,9 +963,7 @@ export const ContentManagerClients: React.FC = () => {
                           className={`w-full flex justify-center items-center gap-[8px] text-[16px] text-[#1C63DB] font-[500] px-[32px] py-[8px] bg-[#008FF61A] rounded-[1000px] ${client.status !== "active" ? "opacity-[0.5]" : ""}`}
                           onClick={() => {
                             if (client.status !== "active") return;
-                            navigate(
-                              `/content-manager/messages/${client.client_id}`
-                            );
+                            navigate(`/clients/${client.client_id}`);
                           }}
                           disabled={client.status !== "active"}
                         >

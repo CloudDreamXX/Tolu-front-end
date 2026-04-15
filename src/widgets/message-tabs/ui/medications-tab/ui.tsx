@@ -5,16 +5,15 @@ import {
   useUpdateMedicationMutation,
   useDeleteMedicationMutation,
 } from "entities/health-history/api";
-import { RootState } from "entities/store";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MaterialIcon } from "shared/assets/icons/MaterialIcon";
 import { cn, toast, usePageWidth } from "shared/lib";
 import { Button, Input, Textarea } from "shared/ui";
 import { useFilePicker } from "../../../../shared/hooks/useFilePicker";
 import { ChatScroller } from "../components/ChatScroller";
-import { MedicationItem } from "widgets/medication-item/ui";
+import { FileBadge, MedicationItem } from "widgets/medication-item/ui";
+import { Medication } from "entities/health-history";
 
 interface edicationsTabProps {
   search?: string;
@@ -25,10 +24,9 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
   chat,
   search,
 }) => {
-  const profile = useSelector((state: RootState) => state.user.user);
   const isToluAdmin = chat?.participants.some((p) => p.role === "admin");
 
-  const { isMobile, isTablet, isMobileOrTablet } = usePageWidth();
+  const { isMobileOrTablet } = usePageWidth();
   const {
     files,
     items,
@@ -45,6 +43,10 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingFileInfo, setEditingFileInfo] = useState<
+    Medication["file_info"] | null
+  >(null);
+  const [removeExistingFile, setRemoveExistingFile] = useState(false);
   const [input, setInput] = useState("");
   const [title, setTitle] = useState("");
 
@@ -78,12 +80,14 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
           medicationData: {
             title,
             content: input,
-            remove_file: items.length === 0,
+            remove_file: removeExistingFile,
           },
           file: items[0]?.file,
         }).unwrap();
 
         setEditingId(null);
+        setEditingFileInfo(null);
+        setRemoveExistingFile(false);
       } else {
         await createMedication({
           medicationData: {
@@ -107,45 +111,37 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
   const handleDelete = async (id: string) => {
     try {
       await deleteMedication({ medicationId: id }).unwrap();
+      setTitle("");
+      setInput("");
+      setEditingId(null);
+      setEditingFileInfo(null);
+      setRemoveExistingFile(false);
+      clear();
       refetch();
     } catch {
       toast({ title: "Failed to delete note", variant: "destructive" });
     }
   };
 
-  const handleEdit = (id: string, title: string, content: string) => {
+  const handleEdit = (
+    id: string,
+    title: string,
+    content: string,
+    fileInfo?: Medication["file_info"]
+  ) => {
     setEditingId(id);
     setTitle(title);
     setInput(content);
+    clear();
+    setEditingFileInfo(fileInfo ?? null);
+    setRemoveExistingFile(false);
   };
 
-  const isClient = profile?.roleName === "Client";
-  const filesDivHeight = files.length > 0 ? 64 : 0;
-
-  const containerStyle = {
-    height: isClient
-      ? `calc(100vh - ${372.5 + filesDivHeight}px)`
-      : `calc(100vh - ${384.5 + filesDivHeight}px)`,
-  };
-
-  const containerStyleMd = {
-    height: isClient
-      ? `calc(100vh - ${489 + filesDivHeight}px)`
-      : `calc(100vh - ${409 + filesDivHeight}px)`,
-  };
-
-  const containerStyleLg = {
-    height: isClient
-      ? `calc(100vh - ${316 + filesDivHeight}px)`
-      : `calc(100vh - ${470 + filesDivHeight}px)`,
-  };
-
-  let currentStyle = containerStyleLg;
-  if (isMobile) {
-    currentStyle = containerStyle;
-  } else if (isTablet) {
-    currentStyle = containerStyleMd;
-  }
+  const showExistingAttachedFile =
+    Boolean(editingId) &&
+    Boolean(editingFileInfo?.file_url) &&
+    !removeExistingFile &&
+    files.length === 0;
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -221,8 +217,8 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
   );
 
   return (
-    <>
-      <div style={currentStyle} className="relative w-full pr-3">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="relative w-full pr-3 flex-1 min-h-0">
         {dataForList.length === 0 && !isLoading ? (
           renderEmptyState()
         ) : (
@@ -233,7 +229,9 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
             itemContent={(_index, medication) => (
               <MedicationItem
                 medication={medication}
-                onEdit={(id, title, content) => handleEdit(id, title, content)}
+                onEdit={(id, title, content, fileInfo) =>
+                  handleEdit(id, title, content, fileInfo)
+                }
                 onDelete={handleDelete}
               />
             )}
@@ -258,7 +256,7 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
       </div>
 
       {!isToluAdmin && (
-        <div className="pt-2">
+        <div className="pt-2 shrink-0">
           <Input
             placeholder="Title"
             value={title}
@@ -325,9 +323,35 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
                     </div>
                   </div>
                 )}
+
+                {showExistingAttachedFile && editingFileInfo && (
+                  <div className="mt-1">
+                    <p className="text-sm font-medium text-[#1D1D1F]">
+                      Attached File:
+                    </p>
+                    <div className="flex max-w-[800px] gap-4 mt-2 overflow-x-auto">
+                      <div className="flex items-center gap-3">
+                        <FileBadge fi={editingFileInfo} />
+                        <Button
+                          variant="unstyled"
+                          size="unstyled"
+                          onClick={() => setRemoveExistingFile(true)}
+                          className="text-red-500"
+                          aria-label="Remove attached file"
+                        >
+                          <MaterialIcon iconName="delete" fill={1} />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-4">
-                    <Input {...getInputProps()} className="hidden" />
+                    <Input
+                      {...getInputProps()}
+                      className="hidden"
+                      clearable={false}
+                    />
                     <Button value={"ghost"} className="p-0" onClick={open}>
                       <MaterialIcon iconName="add" className="text-[#1D1D1F]" />
                     </Button>
@@ -357,6 +381,6 @@ export const MedicationsTab: React.FC<edicationsTabProps> = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };

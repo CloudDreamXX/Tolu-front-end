@@ -130,7 +130,7 @@ export const LoginForm = () => {
       if (isMobileOrTablet) {
         navigate(`/content-manager/library/new_chat_${Date.now()}`);
       } else {
-        navigate("/content-manager/create");
+        navigate("/clients");
       }
       return;
     }
@@ -143,7 +143,7 @@ export const LoginForm = () => {
       // const issue = findFirstIncompleteStep(coachData);
       // if (issue) navigate(issue.route);
       // else
-      navigate("/content-manager/create");
+      navigate("/clients");
     } catch (err: any) {
       const detail = err?.data?.detail;
       console.error(err);
@@ -153,7 +153,7 @@ export const LoginForm = () => {
         detail.includes("No onboarding profile found")
       ) {
         navigate(
-          "/content-manager/create"
+          "/clients"
           //   {
           //   state: { incompleteRoute: "/select-type" },
           // }

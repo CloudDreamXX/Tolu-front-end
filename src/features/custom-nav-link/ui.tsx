@@ -22,6 +22,11 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
+  const isContentItemActive =
+    item.title === "Content library"
+      ? location.pathname.startsWith("/content-manager/library")
+      : location.pathname.includes(item.title.toLowerCase());
+
   useEffect(() => {
     if (isNarrow) {
       setOpen(false);
@@ -33,17 +38,12 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
       <NavLink
         to={item.link}
         onClick={() => {
-          if (
-            !location.pathname.startsWith("/content-manager/library/folder/")
-          ) {
-            setOpenSidebar?.(false);
-          }
           onClick?.();
         }}
         className={({ isActive }) =>
           cn(
-            "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB]",
-            isActive ? "text-[#1C63DB]" : "text-[#1D1D1F]"
+            "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] rounded-[10px] w-full",
+            isActive ? "text-[#1C63DB] bg-[#F3F6FB]" : "text-[#1D1D1F]"
           )
         }
       >
@@ -60,9 +60,9 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
           variant={"unstyled"}
           size={"unstyled"}
           className={cn(
-            "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB]",
-            location.pathname.includes(item.title.toLowerCase())
-              ? "text-[#1C63DB]"
+            "flex items-center gap-3 px-4 py-[14px] text-[14px] font-semibold hover:text-[#1C63DB] rounded-[8px]",
+            isContentItemActive
+              ? "text-[#1C63DB] bg-[#F3F6FB]"
               : "text-[#1D1D1F]"
           )}
           onClick={() => {
@@ -81,7 +81,7 @@ export const CustomNavLink: React.FC<CustomNavLinkProps> = ({
             ))}
         </Button>
         {open && (
-          <div className="pl-6">
+          <div className="pl-2 pr-1 min-w-0 max-w-full overflow-x-hidden">
             {isValidElement(item.content)
               ? cloneElement(item.content, {
                   onChildrenItemClick: () => {

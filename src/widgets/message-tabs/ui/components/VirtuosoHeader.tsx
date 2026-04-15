@@ -23,5 +23,5 @@ export const VirtuosoHeader: React.FC<VirtuosoHeaderProps> = ({
       </div>
     );
   }
-  return <div className="py-2 text-center opacity-60">No more messages</div>;
+  return <div></div>;
 };

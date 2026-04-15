@@ -8,6 +8,7 @@ const PopoverTrigger = PopoverPrimitive.Trigger;
 
 type PopoverContentOwnProps = {
   container?: HTMLElement | null;
+  arrow?: boolean;
 };
 
 const PopoverContent = React.forwardRef<
@@ -21,6 +22,7 @@ const PopoverContent = React.forwardRef<
       align = "center",
       side = "top",
       sideOffset = 4,
+      arrow = true,
       children,
       container,
       ...props
@@ -42,11 +44,13 @@ const PopoverContent = React.forwardRef<
         {...props}
       >
         {children}
-        <PopoverPrimitive.Arrow
-          className="fill-white stroke-[#1C63DB]"
-          width={16}
-          height={8}
-        />
+        {arrow && (
+          <PopoverPrimitive.Arrow
+            className="fill-white stroke-[#1C63DB]"
+            width={16}
+            height={8}
+          />
+        )}
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   )

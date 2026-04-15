@@ -104,7 +104,7 @@ export const CalendarBlock: React.FC<Props> = ({
                   <p className="text-sm font-medium text-[#5F5F65] flex-1">
                     {day.toLocaleDateString("en-US", { weekday: "short" })}
                   </p>
-                  <p
+                  <div
                     className={cn(
                       "relative font-medium text-[#1D1D1F] flex-1 min-h-[34px] flex justify-center items-center w-full rounded-full text-center cursor-pointer hover:bg-[#ECEFF4] hover:text-[#1D1D1F]",
                       {
@@ -120,16 +120,18 @@ export const CalendarBlock: React.FC<Props> = ({
                       setOpenCalendarModal(false);
                     }}
                   >
-                    {day.getDate()}
-                    {hasData && (
-                      <span
-                        className={cn(
-                          "absolute right-[30px] top-[8px] h-[6px] w-[6px] rounded-full",
-                          isSelected ? "bg-white" : "bg-[#1C63DB]"
-                        )}
-                      />
-                    )}
-                  </p>
+                    <div className="flex items-start gap-[4px]">
+                      {day.getDate()}
+                      {hasData && (
+                        <span
+                          className={cn(
+                            "h-[6px] w-[6px] rounded-full",
+                            isSelected ? "bg-white" : "bg-[#1C63DB]"
+                          )}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               );
             })()

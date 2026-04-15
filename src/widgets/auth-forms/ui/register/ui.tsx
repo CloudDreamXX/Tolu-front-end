@@ -295,7 +295,7 @@ export const Register = () => {
             },
           });
         } else {
-          navigate("/content-manager/create");
+          navigate("/clients");
         }
         return;
       }

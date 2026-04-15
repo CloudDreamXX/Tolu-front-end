@@ -27,7 +27,6 @@ import { useFetchAllChatsQuery } from "entities/chat";
 export const ContentManagerSidebar: React.FC = () => {
   const nav = useNavigate();
   const [links] = useState(sideBarContent);
-  const [isNarrow, setIsNarrow] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -65,19 +64,6 @@ export const ContentManagerSidebar: React.FC = () => {
       document.removeEventListener("keydown", handleEscape, true);
     };
   }, [menuOpen]);
-
-  useEffect(() => {
-    const checkWidth = () => {
-      const w = window.innerWidth;
-      setIsNarrow(
-        location.pathname.includes("document") ? false : w >= 1280 && w <= 1536
-      );
-      setSidebarOpen(location.pathname.includes("document") ? true : w >= 1536);
-    };
-    checkWidth();
-    window.addEventListener("resize", checkWidth);
-    return () => window.removeEventListener("resize", checkWidth);
-  }, [location.pathname]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -143,49 +129,34 @@ export const ContentManagerSidebar: React.FC = () => {
 
   return (
     <>
-      {isNarrow && (
-        <Button
-          variant={"ghost"}
-          size={"icon"}
-          onClick={toggleSidebar}
+      <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={toggleSidebar}
+        className={cn(
+          "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
+          "transition-all duration-300",
+          sidebarOpen ? "left-[247px]" : "left-[68px]"
+        )}
+      >
+        <MaterialIcon
+          iconName="last_page"
           className={cn(
-            "absolute z-20 text-blue-700 top-2/3 bg-white hover:bg-gray-50 hover:text-blue-700 rounded-full",
-            "transition-all duration-300",
-            sidebarOpen ? "left-[296px]" : "left-[76px]"
+            "transition-transform duration-300",
+            sidebarOpen ? "rotate-180" : "rotate-0"
           )}
-        >
-          <MaterialIcon
-            iconName="last_page"
-            className={cn(
-              "transition-transform duration-300",
-              sidebarOpen ? "rotate-180" : "rotate-0"
-            )}
-          />
-        </Button>
-      )}
+        />
+      </Button>
 
       <div
         className={cn(
-          "transition-all duration-300 pr-1",
+          "transition-all duration-300",
           "flex flex-col h-full ",
-          sidebarOpen ? "min-w-[300px] max-w-[450px]" : "w-[81px]"
+          sidebarOpen ? "min-w-[239px] max-w-[250px]" : "w-[60px]"
         )}
       >
-        <ScrollArea className="h-[calc(100vh-64px)] bg-white ">
+        <ScrollArea className="h-[calc(100vh-64px)] bg-white">
           <div className={cn("flex flex-col gap-8 h-full")}>
-            <div className="flex flex-col items-center text-center">
-              <h2
-                className={cn(
-                  "font-bold ",
-                  sidebarOpen ? "text-[40px]" : "text-[27px]"
-                )}
-              >
-                Tolu AI
-              </h2>
-              {sidebarOpen && (
-                <h3 className="text-[24px] font-semibold ">Creator Studio</h3>
-              )}
-            </div>
             <div
               className={cn(
                 "flex flex-col gap-[24px]",
@@ -194,26 +165,27 @@ export const ContentManagerSidebar: React.FC = () => {
             >
               <Button
                 variant="brightblue"
-                className="w-full"
+                className="w-full py-[11px] text-[16px] font-semibold"
                 onClick={handleCreateWithTolu}
               >
-                <MaterialIcon iconName={"stars_2"} fill={1} />
-                {sidebarOpen && "Create with Tolu"}
+                {!sidebarOpen && <MaterialIcon iconName={"stars_2"} fill={1} />}
+                {sidebarOpen && "Ask Tolu"}
               </Button>
               <div
                 className={cn(
                   "flex flex-col",
-                  sidebarOpen ? "items-start" : "items-center"
+                  sidebarOpen ? "items-start w-full" : "items-center"
                 )}
               >
                 {links.map((link) => (
-                  <div className="relative">
+                  <div key={link.title} className="relative w-full">
                     <CustomNavLink
-                      key={link.title}
                       item={link}
                       isNarrow={!sidebarOpen}
                       setOpenSidebar={setSidebarOpen}
-                      hideArrow
+                      hideArrow={
+                        !link.content || link.title === "Content library"
+                      }
                     />
                     {link.title === "Messages" && totalUnreadCount > 0 && (
                       <span className="absolute top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
@@ -230,12 +202,14 @@ export const ContentManagerSidebar: React.FC = () => {
           variant={"unstyled"}
           size={"unstyled"}
           onClick={sidebarOpen ? () => {} : () => setMenuOpen(!menuOpen)}
-          className={`flex gap-4 items-center ${sidebarOpen ? "px-4 justify-between" : "justify-center"}`}
+          className={`flex gap-4 items-center justify-center gap-[18px] ${sidebarOpen ? "px-4" : ""}`}
         >
-          <Avatar className="mr-[20px]">
-            <AvatarImage src={user?.photo} alt="Avatar" />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
+          {!sidebarOpen && (
+            <Avatar>
+              <AvatarImage src={user?.photo} alt="Avatar" />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+          )}
           {sidebarOpen && (
             <p className="text-[#1D1D1F] hover:text-[#1C63DB] my-0 text-[16px]/[22px] font-semibold">
               {user?.first_name ? user?.first_name : user?.name}{" "}
